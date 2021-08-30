@@ -1,0 +1,3 @@
+[submodule "thirdparty/tiny-utf8"]
+	path = thirdparty/tiny-utf8
+	url = git@github.com:DuffsDevice/tiny-utf8.git

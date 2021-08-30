@@ -1,0 +1,6 @@
+.vs/
+.idea/
+/build/
+/cmake-build-*/
+/thirdparty/*/
+/cache/
