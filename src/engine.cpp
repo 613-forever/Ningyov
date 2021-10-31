@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <thread>
-#include <png++/png.hpp>
+#include <png.hpp>
 #include <boost/filesystem.hpp>
 #include <dialog_video_generator/drawable.h>
 #include <dialog_video_generator/math/pos_utils.h>
@@ -17,7 +17,7 @@ Strategy::~Strategy() = default;
 
 Engine::Engine(std::vector<std::unique_ptr<Strategy>>&& strategies, Frames s)
     : start(s), wait{0}, activeCache{0}, strategies(std::move(strategies)), counter(0), copyRGB(false) {
-  for (auto& strategy: strategies) {
+  for (auto& strategy: this->strategies) {
     strategy->init(this);
     copyRGB = copyRGB || strategy->needToCopyRGB();
   }
@@ -93,12 +93,12 @@ void Engine::renderFirstFrame() const {
     bufferCount[0] = layers[0]->bufferCount();
     bufferIndices[0] = bufferCount[0] + 1;
     layers[0]->nextFrame(0_fr);
-    layers[0]->addTask(Vec2i{0, 0}, 0, tasks);
+    layers[0]->addTask(Vec2i{0, 0}, 16, tasks);
     for (int i = 1; i < layers.size(); ++i) {
       bufferCount[i] = layers[i]->bufferCount();
       bufferIndices[i] = bufferIndices[i - 1] + bufferCount[i];
       layers[i]->nextFrame(0_fr);
-      layers[i]->addTask(Vec2i{0, 0}, 0, tasks);
+      layers[i]->addTask(Vec2i{0, 0}, 16, tasks);
     }
     prepareMiddleResultBuffers(bufferIndices.back());
     for (std::size_t i = 0, buf = 1; i < layers.size(); ++i) {
@@ -128,7 +128,7 @@ void Engine::renderNonFirstFrame(Frames timeInScene) const {
       } else {
         layers[i]->nextFrame(timeInScene);
       }
-      layers[i]->addTask(Vec2i{0, 0}, 0, tasks);
+      layers[i]->addTask(Vec2i{0, 0}, 16, tasks);
     }
     if (tasks.empty()) return;
     if (!staticFlag) {

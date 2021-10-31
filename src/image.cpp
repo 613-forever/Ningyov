@@ -54,36 +54,11 @@ void RawImage::write(const std::string& dir, const std::string& filename, std::a
                                           fullPathname, height, width, memory.get());
 //  assert(height == config::HEIGHT && width == config::WIDTH); // only to check if wrong image is written.
 
-//  auto bufferSize = size.total() * 4;
-//  Memory imageBuffer(bufferSize);
-//  cudaMemcpy(imageBuffer.data(), memory.get(), bufferSize, cudaMemcpyDeviceToHost);
-
   auto memory3 = cuda::allocateMemory3(height, width);
   cuda::copyRGBChannel(memory3.get(), memory.get());
   size_t bufferSize = size.total() * 3;
 
   ++counter;
-//  std::thread thr([fullPathname, &counter](Memory&& imageBuffer) {
-//    png::image<png::rgb_pixel> image(WIDTH, HEIGHT);
-//    for (png::uint_32 i = 0; i < HEIGHT; ++i) {
-//      for (png::uint_32 j = 0; j < WIDTH; ++j) {
-//        auto pixelIndex = i * WIDTH + j;
-//        image.set_pixel(j, i, png::rgb_pixel(
-//            png::byte(imageBuffer[pixelIndex * 4 + 0]),
-//            png::byte(imageBuffer[pixelIndex * 4 + 1]),
-//            png::byte(imageBuffer[pixelIndex * 4 + 2])
-//        ));
-//      }
-//    }
-//    BOOST_LOG_TRIVIAL(trace) << fmt::format("Data in PNG object: [{},{},{}]",
-//                                            image.get_pixel(0, 0).red,
-//                                            image.get_pixel(0, 0).green,
-//                                            image.get_pixel(0, 0).blue);
-//    image.write(fullPathname);
-//    BOOST_LOG_TRIVIAL(info) << fmt::format("Written: \"{}\".", fullPathname);
-//    --counter;
-//  }, std::move(imageBuffer));
-//  thr.detach();
   std::thread thr([fullPathname, &counter, bufferSize, width, height](CudaMemory&& memory3) {
     png::image<png::rgb_pixel, png::solid_pixel_buffer<png::rgb_pixel>> image(width, height);
 //    png++ implementation-dependent cast. get_pixbuf().get_bytes() returns the very reference to the underlying vector.

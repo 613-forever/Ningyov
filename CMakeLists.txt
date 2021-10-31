@@ -38,19 +38,10 @@ if (NOT MADOMAGI_DIALOG_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
     add_definitions(-DMADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
     link_libraries(Boost::headers)
 endif ()
-
-add_definitions(
-        -DMADOMAGI_DIALOG_FRAMES_PER_SECOND=30
-        -DMADOMAGI_DIALOG_WIDTH=1920
-        -DMADOMAGI_DIALOG_HEIGHT=1080
-        -DMADOMAGI_DIALOG_GPU_MAX_THREAD_PER_BLOCK=1024
-        -DMADOMAGI_DIALOG_CPU_THREADS_NUM=4
-        )
-
 if (MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
-    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=\"${CMAKE_CXX_FLAGS}\"")
+    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=\"/utf-8 /std:c++14\"")
 endif (MSVC)
 
 set(${PROJECT_NAME}_HEADERS
@@ -108,6 +99,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         ${Common613_LIBRARIES}
         ${png++_LIBRARIES}
         Boost::log
+        Boost::log_setup
         Boost::filesystem
         fmt::fmt
         Freetype::Freetype

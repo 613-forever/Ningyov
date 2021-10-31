@@ -3,10 +3,10 @@
 
 #ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
+#include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including WinSock.h repeatedly.
 #include <dialog_video_generator/engine.h>
 
 #include <cuda_runtime.h>
-#include <boost/process.hpp>
 #include <common613/memory.h>
 #include <dialog_video_generator/drawable.h>
 
