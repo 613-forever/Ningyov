@@ -3,7 +3,8 @@
 
 #ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
-#include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including WinSock.h repeatedly.
+#include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu.
+#include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including "WinSock.h" repeatedly.
 #include <dialog_video_generator/engine.h>
 
 #include <cuda_runtime.h>
@@ -25,13 +26,17 @@ Engine::ChildProcVideo::~ChildProcVideo() {
 }
 
 void Engine::ChildProcVideo::init(const Engine* engine) {
-  std::string params = fmt::format(
-      "-y -f rawvideo -pixel_format rgb24 -video_size {}x{} -r {} -i - -c:v libx265 -pix_fmt yuv420p -maxrate 6000k",
-      config::WIDTH, config::HEIGHT, config::FRAMES_PER_SECOND
+  if (!boost::filesystem::exists(targetDir)) {
+    BOOST_LOG_TRIVIAL(info) << "Creating directories: " << targetDir;
+    boost::filesystem::create_directories(targetDir);
+  }
+  std::string command = fmt::format(
+      "ffmpeg -y -f rawvideo -pixel_format rgb24 -video_size {}x{} -r {} -i - -c:v libx265 -pix_fmt yuv420p -maxrate 6000k {}",
+      config::WIDTH, config::HEIGHT, config::FRAMES_PER_SECOND,
+      targetDir + name
       );
   state = new State;
-  state->childProcess = boost::process::child(boost::process::search_path("ffmpeg"), params, targetDir + name,
-                                              boost::process::std_in < state->stream);
+  state->childProcess = boost::process::child(command, boost::process::std_in < state->stream);
 }
 
 void Engine::ChildProcVideo::handleFrame(const Engine* engine, int index) {
@@ -45,7 +50,7 @@ void Engine::ChildProcVideo::handleFrame(const Engine* engine, int index) {
 void Engine::ChildProcVideo::cleanup(const Engine* engine) {
   if (state != nullptr) {
     if (state->childProcess.running()) {
-      state->stream.close();
+      state->stream.pipe().close();
       state->childProcess.wait();
     }
     delete state;

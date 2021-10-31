@@ -33,7 +33,7 @@ boost::log::trivial::severity_level level = boost::log::trivial::info;
 
 void loadConfig() {
   using namespace common613::file;
-  const File file = open("config.txt", "r");
+  const File file = open("config.txt", "r", std::nothrow);
   if (file == nullptr) {
     return;
   }

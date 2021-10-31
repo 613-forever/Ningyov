@@ -12,7 +12,7 @@
 
 namespace dialog_video_generator { namespace image {
 
-std::unordered_map<std::string, RawImage> regisImages(0x100);
+std::unordered_map<std::string, RawImage> regisImages(0x100); // NOLINT(cert-err58-cpp)
 
 void RawImage::copyTo(const CudaMemory& target) const {
   cudaMemcpy(target.get(), memory.get(), size.h() * size.w() * Color4b::size, cudaMemcpyDeviceToDevice);
@@ -88,7 +88,7 @@ void Image::addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool 
       mul,
       extraAlpha,
       withAlpha, false, false, extraAlpha < 16,
-      false, (this->flipX == flip),
+      false, (this->flipX != flip),
       raw.memory.get(),
   });
 }

@@ -32,9 +32,11 @@ Face openFace(const std::string& filePathname) {
   FT_Face face;
   FT_Error error = FT_New_Face(library.get(), filePathname.c_str(), 0, &face);
   if (error == FT_Err_Unknown_File_Format) {
-    COMMON613_FATAL("Unsupported file format reported by FreeType.");
-  } else if (error) {
-    COMMON613_FATAL("Erroneous font file reported by FreeType. Error code: {}.", error);
+    COMMON613_FATAL("Unsupported file format reported by Freetype: {}.", filePathname);
+  } else if (error == FT_Err_Cannot_Open_Resource) {
+    COMMON613_FATAL("Cannot open resource file by Freetype: {}.", filePathname);
+  } if (error) {
+    COMMON613_FATAL("Erroneous font file reported by Freetype: {}. Error code: {}.", filePathname, error);
   }
   BOOST_LOG_TRIVIAL(trace) << "Loaded typeface is allocated at " << (void*)face;
   return Face(face);

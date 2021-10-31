@@ -151,8 +151,9 @@ void Engine::renderTasks(size_t startBuffer, size_t bg,
   auto cudaTasks = cuda::copyFromCPUMemory(tasks.data() + skippedTaskNumber, tasksSizeInBytes);
 
   size_t destCount = getBufferCount() - startBuffer;
-  auto bufferRequired = std::count_if(tasks.begin() + common613::checked_cast<std::ptrdiff_t>(skippedTaskNumber),
-                                      tasks.end(), [](const DrawTask& task) { return !task.skip; });
+  auto bufferRequired = tasksSize;
+      // std::count_if(tasks.begin() + common613::checked_cast<std::ptrdiff_t>(skippedTaskNumber),
+      //              tasks.end(), [](const DrawTask& task) { return !task.skip; });
   COMMON613_REQUIRE(bufferRequired == destCount,
                     "Mismatching numbers of buffers {} (required by tasks) and {} (provided to rewrite).",
                     bufferRequired, destCount);
