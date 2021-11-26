@@ -21,8 +21,10 @@ using drawable::Drawable;
 using CudaMemory = std::shared_ptr<unsigned char>;
 
 namespace image {
+class RawImage3;
 class RawImage;
 }
+using image::RawImage3;
 using image::RawImage;
 
 struct DrawTask;
@@ -41,7 +43,6 @@ public:
   virtual void init(const Engine*) {}
   virtual void handleFrame(const Engine* engine, int index) {}
   virtual void cleanup(const Engine*) {}
-  virtual bool needToCopyRGB() { return true; }
 };
 
 class Engine {
@@ -76,7 +77,7 @@ private:
   std::vector<std::shared_ptr<Drawable>> layers;
   // buffers to reuse
   mutable std::vector<std::shared_ptr<RawImage>> buffers;
-  CudaMemory lastLayerRGB;
+  mutable std::shared_ptr<RawImage3> lastLayerRGB;
   // buffer count for every layer
   mutable std::vector<std::size_t> bufferIndices;
   mutable std::vector<std::size_t> bufferCount;
@@ -86,7 +87,6 @@ private:
   mutable Frames activeCache;
   // save
   Strategies strategies;
-  bool copyRGB;
   mutable std::atomic_int counter;
 
 public:
@@ -103,7 +103,6 @@ public:
     SaveIntermediateResults(std::string cacheDir, std::string format);
     void init(const Engine* engine) override;
     void handleFrame(const Engine* engine, int index) override;
-    bool needToCopyRGB() override { return false; }
   private:
     std::string targetDir, format;
   };

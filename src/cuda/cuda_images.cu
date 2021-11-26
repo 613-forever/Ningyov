@@ -7,11 +7,11 @@ namespace dialog_video_generator { namespace cuda {
 
 namespace {
 
-__device__ void copyPixel(unsigned char* dst, const unsigned char* bg, unsigned int WIDTH, unsigned int y, unsigned int x) {
+__device__ void copyPixelRGB(unsigned char* dst, const unsigned char* bg, unsigned int WIDTH, unsigned int y, unsigned int x) {
   unsigned int index = y * WIDTH + x;
-  dst[index * 4 + 0] = bg[index * 4 + 0];
-  dst[index * 4 + 1] = bg[index * 4 + 1];
-  dst[index * 4 + 2] = bg[index * 4 + 2];
+  dst[index * 3 + 0] = bg[index * 4 + 0];
+  dst[index * 3 + 1] = bg[index * 4 + 1];
+  dst[index * 3 + 2] = bg[index * 4 + 2];
 }
 
 __device__ void renderPixel(unsigned char* dst, const unsigned char* bg, const DrawTask* task, unsigned int WIDTH, unsigned int y, unsigned int x) {
@@ -64,7 +64,7 @@ __device__ void renderPixel(unsigned char* dst, const unsigned char* bg, const D
   }
 }
 
-__global__ void renderKernel(unsigned char** pDst, const DrawTask* pTask, size_t taskNum,
+__global__ void renderKernel(unsigned char** pDst, const DrawTask* pTask, size_t taskNum, unsigned char* rgb,
                              unsigned int THREAD_PER_BLOCK, unsigned int WIDTH) {
   unsigned int x = threadIdx.x + THREAD_PER_BLOCK * blockIdx.y, y = blockIdx.x;
   __shared__ unsigned char* bg;
@@ -77,17 +77,17 @@ __global__ void renderKernel(unsigned char** pDst, const DrawTask* pTask, size_t
       bg = *pDst;
     }
   }
-  if (*pDst != bg) {
-    copyPixel(*pDst, bg, WIDTH, y, x);
+  if (rgb) {
+    copyPixelRGB(rgb, bg, WIDTH, y, x);
   }
 }
 
 } // anonymous namespace
 
-__host__ void renderTasks(unsigned char** pDst, const DrawTask* pTask, size_t taskNum) {
+__host__ void renderTasks(unsigned char** pDst, const DrawTask* pTask, size_t taskNum, unsigned char* rgb) {
   dim3 blockInGrid(config::HEIGHT, config::WIDTH_BATCHES);
   dim3 threadInBlock(config::THREAD_PER_BLOCK);
-  renderKernel<<<blockInGrid, threadInBlock>>>(pDst, pTask, taskNum, config::THREAD_PER_BLOCK, config::WIDTH);
+  renderKernel<<<blockInGrid, threadInBlock>>>(pDst, pTask, taskNum, rgb, config::THREAD_PER_BLOCK, config::WIDTH);
 }
 
 namespace {
@@ -95,10 +95,7 @@ namespace {
 __global__ void copyRGBKernel(unsigned char* dst, const unsigned char* src,
                               unsigned int THREAD_PER_BLOCK, unsigned int WIDTH) {
   unsigned int x = threadIdx.x + THREAD_PER_BLOCK * blockIdx.y, y = blockIdx.x;
-  unsigned int index = y * WIDTH + x;
-  dst[index * 3 + 0] = src[index * 4 + 0];
-  dst[index * 3 + 1] = src[index * 4 + 1];
-  dst[index * 3 + 2] = src[index * 4 + 2];
+  copyPixelRGB(dst, src, WIDTH, y, x);
 }
 
 } // anonymous namespace

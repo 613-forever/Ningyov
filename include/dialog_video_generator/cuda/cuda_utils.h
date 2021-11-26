@@ -59,7 +59,7 @@ struct DrawTask {
 
 namespace cuda {
 
-void renderTasks(unsigned char** pDst, const DrawTask* pTask, size_t taskNum);
+void renderTasks(unsigned char** pDst, const DrawTask* pTask, size_t taskNum, unsigned char* rgb);
 
 void copyRGBChannel(unsigned char* dst, const unsigned char* src);
 

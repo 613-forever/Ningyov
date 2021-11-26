@@ -8,7 +8,6 @@
 #include <png.hpp>
 #include <boost/filesystem.hpp>
 #include <dialog_video_generator/drawable.h>
-#include <dialog_video_generator/math/pos_utils.h>
 
 namespace dialog_video_generator {
 namespace engine {
@@ -16,10 +15,9 @@ namespace engine {
 Strategy::~Strategy() = default;
 
 Engine::Engine(std::vector<std::unique_ptr<Strategy>>&& strategies, Frames s)
-    : start(s), wait{0}, activeCache{0}, strategies(std::move(strategies)), counter(0), copyRGB(false) {
+    : start(s), wait{0}, activeCache{0}, strategies(std::move(strategies)), counter(0), lastLayerRGB{} {
   for (auto& strategy: this->strategies) {
     strategy->init(this);
-    copyRGB = copyRGB || strategy->needToCopyRGB();
   }
 }
 
@@ -72,10 +70,7 @@ void Engine::prepareMiddleResultBuffers(size_t size) const {
 
     for (size_t i = oldSize; i < size; ++i) {
       if (buffers[i] == nullptr) {
-        buffers[i] = std::make_shared<RawImage>(RawImage{
-            {config::HEIGHT, config::WIDTH},
-            cuda::allocateMemory(config::HEIGHT, config::WIDTH),
-        });
+        buffers[i] = RawImage::allocate(config::HEIGHT, config::WIDTH);
         BOOST_LOG_TRIVIAL(debug) << fmt::format(
               "Allocating GPU memory for middle results from Layer {} at {}x{}@{:p}",
               i, buffers[i]->size.h(), buffers[i]->size.w(),
@@ -86,6 +81,9 @@ void Engine::prepareMiddleResultBuffers(size_t size) const {
 }
 
 void Engine::renderFirstFrame() const {
+  if (!lastLayerRGB) {
+    lastLayerRGB = RawImage3::allocate(config::HEIGHT, config::WIDTH);
+  }
   std::vector<DrawTask> tasks;
   bufferCount.resize(layers.size());
   bufferIndices.resize(layers.size());
@@ -167,8 +165,8 @@ void Engine::renderTasks(size_t startBuffer, size_t bg,
   assert(destinations.size() == destCount + 1);
   auto destinationsOnGPU = cuda::copyFromCPUMemory(destinations.data(), destinations.size() * sizeof(unsigned char*));
   cuda::renderTasks(reinterpret_cast<unsigned char**>(destinationsOnGPU.get()),
-                    reinterpret_cast<DrawTask*>(cudaTasks.get()),
-                    tasksSize);
+                    reinterpret_cast<DrawTask*>(cudaTasks.get()), tasksSize,
+                    lastLayerRGB ? lastLayerRGB->memory.get() : nullptr);
 }
 
 void Engine::setWaitLength(Frames fr) {

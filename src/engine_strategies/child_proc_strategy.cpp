@@ -3,19 +3,18 @@
 
 #ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
-#include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu.
+#include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu16.04/boost1.76.
 #include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including "WinSock.h" repeatedly.
 #include <dialog_video_generator/engine.h>
 
-#include <cuda_runtime.h>
-#include <common613/memory.h>
+#include <common613/compat/file_system.h>
 #include <dialog_video_generator/drawable.h>
 
 namespace dialog_video_generator { namespace engine {
 
 struct Engine::ChildProcVideo::State {
   boost::process::child childProcess;
-  boost::process::opstream stream;
+  std::unique_ptr<boost::process::opstream> stream;
 };
 
 Engine::ChildProcVideo::ChildProcVideo(std::string cacheDir, std::string name)
@@ -26,31 +25,41 @@ Engine::ChildProcVideo::~ChildProcVideo() {
 }
 
 void Engine::ChildProcVideo::init(const Engine* engine) {
-  if (!boost::filesystem::exists(targetDir)) {
+  if (!common613::filesystem::exists(targetDir)) {
     BOOST_LOG_TRIVIAL(info) << "Creating directories: " << targetDir;
-    boost::filesystem::create_directories(targetDir);
+    common613::filesystem::create_directories(targetDir);
   }
-  std::string command = fmt::format(
-      "ffmpeg -y -f rawvideo -pixel_format rgb24 -video_size {}x{} -r {} -i - -c:v libx265 -pix_fmt yuv420p -maxrate 6000k {}",
-      config::WIDTH, config::HEIGHT, config::FRAMES_PER_SECOND,
-      targetDir + name
-      );
-  state = new State;
-  state->childProcess = boost::process::child(command, boost::process::std_in < state->stream);
+  auto ffmpegExecutable = boost::process::search_path("ffmpeg");
+  COMMON613_REQUIRE(!ffmpegExecutable.empty(), "Error: FFMpeg executable is not found.");
+  BOOST_LOG_TRIVIAL(debug) << fmt::format("FFMpeg executable found: \"{}\".", ffmpegExecutable.string());
+  auto stream = std::make_unique<boost::process::opstream>();
+  try {
+    state = new State { boost::process::child(
+        ffmpegExecutable,
+        "-y", "-f", "rawvideo", "-pixel_format", "rgb24",
+        "-video_size", std::to_string(config::WIDTH) + "x"s + std::to_string(config::HEIGHT),
+        "-r", std::to_string(config::FRAMES_PER_SECOND),
+        "-i", "-", "-c:v" "libx264", "-pix_fmt", "yuv420p", "-maxrate", "6000k",
+        targetDir + name,
+        boost::process::std_in < *stream) };
+  } catch (boost::process::process_error& e) {
+    delete state;
+    state = nullptr;
+    BOOST_LOG_TRIVIAL(error) << fmt::format("Caught a Boost.Process error when initiating a child process: {}.", e.what());
+    throw;
+  }
+  state->stream = std::move(stream);
 }
 
 void Engine::ChildProcVideo::handleFrame(const Engine* engine, int index) {
-  engine->buffers[engine->getBufferCount() - 1]->copyToMemory3([this](CudaMemory&& cudaMemory, std::size_t size){
-    common613::Memory memory(size);
-    cudaMemcpy(memory.data(), cudaMemory.get(), size, cudaMemcpyDeviceToHost);
-    state->stream.write(reinterpret_cast<char*>(memory.data()), common613::checked_cast<long>(size));
-  });
+  assert(state != nullptr);
+  engine->lastLayerRGB->write(*state->stream);
 }
 
 void Engine::ChildProcVideo::cleanup(const Engine* engine) {
   if (state != nullptr) {
     if (state->childProcess.running()) {
-      state->stream.pipe().close();
+      state->stream->pipe().close();
       state->childProcess.wait();
     }
     delete state;

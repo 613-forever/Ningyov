@@ -16,15 +16,11 @@ Engine::StdoutStreaming::StdoutStreaming() {
 Engine::StdoutStreaming::~StdoutStreaming() = default;
 
 void Engine::StdoutStreaming::handleFrame(const Engine* engine, int index) {
-  engine->buffers[engine->getBufferCount() - 1]->copyToMemory3([/*this*/](CudaMemory&& cudaMemory, std::size_t size){
-    common613::Memory memory(size);
-    cudaMemcpy(memory.data(), cudaMemory.get(), size, cudaMemcpyDeviceToHost);
-    std::fwrite(memory.data(), 1, size, stdout);
-  });
+  engine->lastLayerRGB->write(std::cout);
 }
 
 void Engine::StdoutStreaming::cleanup(const Engine* engine) {
-  std::fflush(stdout);
+  std::cout.flush();
 }
 
 } }

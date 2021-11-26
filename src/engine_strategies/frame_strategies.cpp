@@ -16,7 +16,7 @@ Engine::SaveFrameByFrame::SaveFrameByFrame(std::string targetDir, std::string fo
 }
 
 void Engine::SaveFrameByFrame::handleFrame(const Engine* engine, int index) {
-  engine->buffers[engine->getBufferCount() - 1]->write(targetDir, fmt::format(format, index), engine->counter);
+  engine->lastLayerRGB->write(targetDir, fmt::format(format, index), engine->counter);
 }
 
 void Engine::SaveFrameByFrame::init(const Engine* engine) {
