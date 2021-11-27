@@ -41,7 +41,7 @@ void Engine::ChildProcVideo::init(const Engine* engine) {
         "-r", std::to_string(config::FRAMES_PER_SECOND),
         "-i", "-", "-c:v", "libx265", "-pix_fmt", "yuv420p", "-maxrate", "6000k",
         targetDir + name,
-        boost::process::std_in < *stream, boost::process::std_out > stdout, boost::process::std_err > stderr) };
+        boost::process::std_in < *stream, boost::process::std_out > stderr, boost::process::std_err > stderr) };
   } catch (boost::process::process_error& e) {
     delete state;
     state = nullptr;
