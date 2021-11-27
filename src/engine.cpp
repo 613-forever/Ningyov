@@ -166,7 +166,7 @@ void Engine::renderTasks(size_t startBuffer, size_t bg,
   auto destinationsOnGPU = cuda::copyFromCPUMemory(destinations.data(), destinations.size() * sizeof(unsigned char*));
   cuda::renderTasks(reinterpret_cast<unsigned char**>(destinationsOnGPU.get()),
                     reinterpret_cast<DrawTask*>(cudaTasks.get()), tasksSize,
-                    lastLayerRGB ? lastLayerRGB->memory.get() : nullptr);
+                    lastLayerRGB ? (lastLayerRGB->invalidateLazyCPUMemory(), lastLayerRGB->memory.get()) : nullptr);
 }
 
 void Engine::setWaitLength(Frames fr) {

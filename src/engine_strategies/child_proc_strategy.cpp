@@ -59,6 +59,7 @@ void Engine::ChildProcVideo::handleFrame(const Engine* engine, int index) {
 void Engine::ChildProcVideo::cleanup(const Engine* engine) {
   if (state != nullptr) {
     if (state->childProcess.running()) {
+      state->stream->flush();
       state->stream->pipe().close();
       state->childProcess.wait();
     }

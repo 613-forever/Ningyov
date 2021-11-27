@@ -59,19 +59,24 @@ void RawImage3::writeFullPathname(const std::string& fullPathname, std::atomic_i
 }
 
 void RawImage3::write(std::ostream& os) {
+  BOOST_LOG_TRIVIAL(debug) << fmt::format("Trying writing rawImage3 to stream from {}x{}@{:p}",
+                                          size.h(), size.w(), memory.get());
   os.write(reinterpret_cast<const char*>(getLazyCPUMemory().get_pixbuf().get_bytes().data()), size.total() * 3);
+  BOOST_LOG_TRIVIAL(debug) << fmt::format("Written stream.");
 }
 
 RawImage3::PNG& RawImage3::getLazyCPUMemory() {
   if (!lazyCPUMemory) {
     UDim width = size.w(), height = size.h();
     lazyCPUMemory = std::make_shared<PNG>(width, height);
-    auto& image = *lazyCPUMemory;
-    COMMON613_REQUIRE(size.total() * 3 == image.get_pixbuf().get_bytes().size(), "Found mismatching size.");
-    BOOST_LOG_TRIVIAL(trace) << fmt::format("Data in PNG object: [{},{},{}]", image.get_pixel(0, 0).red,
-                                            image.get_pixel(0, 0).green, image.get_pixel(0, 0).blue);
-    cudaMemcpy(const_cast<png::byte*>(image.get_pixbuf().get_bytes().data()),
+  }
+  if (!validLazyCPUMemory) {
+    COMMON613_REQUIRE(size.total() * 3 == lazyCPUMemory->get_pixbuf().get_bytes().size(), "Found mismatching size.");
+    BOOST_LOG_TRIVIAL(trace) << fmt::format("Data in PNG object: [{},{},{}]", lazyCPUMemory->get_pixel(0, 0).red,
+                                            lazyCPUMemory->get_pixel(0, 0).green, lazyCPUMemory->get_pixel(0, 0).blue);
+    cudaMemcpy(const_cast<png::byte*>(lazyCPUMemory->get_pixbuf().get_bytes().data()),
                memory.get(), size.total() * 3, cudaMemcpyDeviceToHost);
+    validLazyCPUMemory = true;
   }
   return *lazyCPUMemory;
 }

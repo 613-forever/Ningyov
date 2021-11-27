@@ -20,10 +20,16 @@ struct RawImage3 {
   using PNG = png::image<png::rgb_pixel, png::solid_pixel_buffer<png::rgb_pixel>>;
   Size size{std::array<UDim, 2>{0, 0}};
   CudaMemory memory{};
-  std::shared_ptr<PNG> lazyCPUMemory{};
+
   void write(const std::string& dir, const std::string& filename, std::atomic_int& counter);
   void writeFullPathname(const std::string& fullPathname, std::atomic_int& counter);
   void write(std::ostream& os);
+
+  std::shared_ptr<PNG> lazyCPUMemory{};
+  bool validLazyCPUMemory{false};
+  void invalidateLazyCPUMemory() {
+    validLazyCPUMemory = false;
+  }
 
   static std::shared_ptr<RawImage3> allocate(UDim height, UDim width) {
     return std::make_shared<RawImage3>(RawImage3{Size{{height, width}}, cuda::allocateMemory3(height, width)});
