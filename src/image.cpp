@@ -11,7 +11,7 @@
 
 namespace dialog_video_generator { namespace image {
 
-std::unordered_map<std::string, RawImage> regisImages(0x100); // NOLINT(cert-err58-cpp)
+std::unordered_map<std::string, RawImage> registeredImages(0x100); // NOLINT(cert-err58-cpp)
 
 //void RawImage::copyTo(const CudaMemory& target) const {
 //  cudaMemcpy(target.get(), memory.get(), size.h() * size.w() * Color4b::size, cudaMemcpyDeviceToDevice);
@@ -19,8 +19,8 @@ std::unordered_map<std::string, RawImage> regisImages(0x100); // NOLINT(cert-err
 
 void RawImage::load(const std::string& dir, const std::string& filename, bool regis) {
   {
-    auto iter = regisImages.find(filename);
-    if (iter != regisImages.end()) {
+    auto iter = registeredImages.find(filename);
+    if (iter != registeredImages.end()) {
       *this = iter->second;
       return;
     }
@@ -41,7 +41,7 @@ void RawImage::load(const std::string& dir, const std::string& filename, bool re
   cudaMemcpy(memory.get(), image.get_pixbuf().get_bytes().data(), pixelNumber * 4, cudaMemcpyHostToDevice);
   showFirstPixelForCuda(memory.get(), "Loaded data (GPU): ");
   if (regis) {
-    regisImages[filename] = *this;
+    registeredImages[filename] = *this;
   }
   BOOST_LOG_TRIVIAL(trace) << fmt::format("Loaded an image from \"{}\".", fullPathname);
 }

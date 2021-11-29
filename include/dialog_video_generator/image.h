@@ -53,7 +53,7 @@ struct RawImage {
   }
 };
 
-extern std::unordered_map<std::string, RawImage> regisImages;
+extern std::unordered_map<std::string, RawImage> registeredImages;
 
 struct Image {
   RawImage raw;
