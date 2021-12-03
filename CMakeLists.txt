@@ -71,11 +71,13 @@ set(${PROJECT_NAME}_SOURCES
         )
 
 set(${PROJECT_NAME}_FACADE_HEADERS
-        director/director.h # director facade
+        multi_scene/character.h # multiscene
+#        multi_scene/director.h # director facade
         )
 
 set(${PROJECT_NAME}_FACADE_SOURCES
-        director/director.cpp
+        multi_scene/character.cpp
+#        multi_scene/director.cpp
         )
 
 list(TRANSFORM ${PROJECT_NAME}_HEADERS PREPEND "include/dialog_video_generator/" OUTPUT_VARIABLE ${PROJECT_NAME}_HEADERS_RELATIVE)
@@ -108,5 +110,19 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         Freetype::Freetype
         ${TinyUTF8_LIBRARIES}
 )
+
+add_library(${PROJECT_NAME}_FACADE STATIC
+        ${${PROJECT_NAME}_FACADE_HEADERS_RELATIVE} ${${PROJECT_NAME}_FACADE_SOURCES_RELATIVE})
+target_include_directories(
+        ${PROJECT_NAME}_FACADE PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_include_directories(${PROJECT_NAME}_FACADE PUBLIC
+        ${Common613_INCLUDE_DIRS}
+        ${png++_INCLUDE_DIRS}
+        ${TinyUTF8_INCLUDE_DIRS}
+)
+target_link_libraries(${PROJECT_NAME}_FACADE PUBLIC ${PROJECT_LIBRARIES})
 
 add_subdirectory("test")
