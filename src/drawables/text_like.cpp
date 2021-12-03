@@ -16,7 +16,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
     : size(sz), start(start), current(start), speedNum(speedNum), speedDen(speedDen), colorType(colorType), glyphs() {
   tiny_utf8::string buffer(content);
 
-  Vec2i offsetInTextbox{0, 0};
+  Vec2i offsetInTextBox{0, 0};
   for (char32_t c : buffer) {
     FT_GlyphSlot slot = font::loadGlyph(font::faceForChineseText, c);
     assert(slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
@@ -29,10 +29,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
       if (slot->bitmap.pitch > 0) {
         unsigned char* memoryPtr = memory.data(), * bufferPtr = slot->bitmap.buffer;
         for (int i = 0; i < glyphSize.h(); ++i) {
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "LocalValueEscapesScope"
           std::memcpy(memoryPtr, bufferPtr, glyphSize.w());
-#pragma clang diagnostic pop
           memoryPtr += glyphSize.w();
           bufferPtr += slot->bitmap.pitch;
         }
@@ -52,16 +49,16 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
 //        std::printf("\n");
 //      }
 //      std::printf("---\n");
-      CudaMemory cudaMemory = cuda::copyFromCPUMemory(memory.data(),  glyphSize.total());
-      if (offsetInTextbox.x() + (slot->metrics.width >> 6) > size.w()) {
-        offsetInTextbox = {0, 96};
+      CudaMemory cudaMemory = cuda::copyFromCPUMemory(memory);
+      if (offsetInTextBox.x() + (slot->metrics.width >> 6) > size.w()) {
+        offsetInTextBox = {0, 96};
       }
       glyphs.emplace_back(Image{RawImage{glyphSize, cudaMemory}, 1, {
-        checked_cast<Dim>(pos.x() + offsetInTextbox.x() + slot->bitmap_left),
-        checked_cast<Dim>(pos.y() + offsetInTextbox.y() - slot->bitmap_top)
+        checked_cast<Dim>(pos.x() + offsetInTextBox.x() + slot->bitmap_left),
+        checked_cast<Dim>(pos.y() + offsetInTextBox.y() - slot->bitmap_top)
       }});
     }
-    offsetInTextbox.x() = checked_cast<Dim>((slot->advance.x >> 6) + offsetInTextbox.x());
+    offsetInTextBox.x() = checked_cast<Dim>((slot->advance.x >> 6) + offsetInTextBox.x());
   }
 }
 

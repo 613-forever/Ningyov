@@ -36,9 +36,9 @@ find_package(fmt REQUIRED)
 
 find_package(Freetype REQUIRED)
 
-if (NOT MADOMAGI_DIALOG_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
+if (NOT DIALOG_VIDEO_GENERATOR_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
 #    find_package(Boost REQUIRED COMPONENTS headers) # process
-    add_definitions(-DMADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
+    add_definitions(-DDIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
     link_libraries(Boost::headers)
 endif ()
 if (MSVC)

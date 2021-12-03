@@ -5,7 +5,6 @@
 
 #include <cctype>
 #include <random>
-#include <fstream>
 #include <common613/file_utils.h>
 #include <dialog_video_generator/math/pos_arith.h>
 #include <dialog_video_generator/math/random_utils.h>
@@ -35,7 +34,7 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   eye[1].raw.load(posDir, expressionPrefix + "_E1", true);
   eye[2].raw.load(posDir, expressionPrefix + "_E2", true);
   eye[3].raw.load(posDir, expressionPrefix + "_E3", true);
-  Vec2i eyeOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? eye[0].raw.size.w() - 1 - pos[0] : pos[0]), static_cast<Dim>(pos[1]) } * mul;
+  Vec2i eyeOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? eye[0].raw.size.w() - 1 - pos[0] : pos[0]), static_cast<Dim>(pos[1]) } * checked_cast<Dim>(mul);
   for (auto& eyeImage : eye) {
     eyeImage.mul = mul;
     eyeImage.pos = eyeOffset;
@@ -45,7 +44,7 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   mouth[0].raw.load(posDir, expressionPrefix + "_M0", true);
   mouth[1].raw.load(posDir, expressionPrefix + "_M1", true);
   mouth[2].raw.load(posDir, expressionPrefix + "_M2", true);
-  Vec2i mouthOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? mouth[0].raw.size.w() - 1 - pos[2] : pos[2]), static_cast<Dim>(pos[3]) } * mul;
+  Vec2i mouthOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? mouth[0].raw.size.w() - 1 - pos[2] : pos[2]), static_cast<Dim>(pos[3]) } * checked_cast<Dim>(mul);
   for (auto& mouthImage : mouth) {
     mouthImage.mul = mul;
     mouthImage.pos = mouthOffset;

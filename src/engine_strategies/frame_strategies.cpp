@@ -33,7 +33,7 @@ Engine::SaveIntermediateResults::SaveIntermediateResults(std::string targetDir, 
 
 void Engine::SaveIntermediateResults::handleFrame(const Engine* engine, int index) {
   for (int layerIndex = 0; layerIndex < engine->getBufferCount(); ++layerIndex) {
-    engine->buffers[layerIndex]->write(targetDir, fmt::format(format, index, layerIndex), engine->counter);
+    engine->buffers[layerIndex]->toRawImage3().write(targetDir, fmt::format(format, index, layerIndex), engine->counter);
   }
 }
 

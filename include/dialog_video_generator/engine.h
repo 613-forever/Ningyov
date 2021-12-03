@@ -106,7 +106,7 @@ public:
   private:
     std::string targetDir, format;
   };
-#ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_STRATEGY
+#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_STRATEGY
   class SaveVideo: public Strategy {
   public:
     SaveVideo(std::string cacheDir, std::string name);
@@ -121,7 +121,7 @@ public:
     std::string targetDir, name;
   };
 #endif
-#ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_GPU_STRATEGY
+#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_GPU_STRATEGY
   class SaveVideoGPU : public Strategy {
   public:
     SaveVideoGPU(std::string cacheDir, std::string name);
@@ -143,7 +143,7 @@ public:
     void handleFrame(const Engine* engine, int index) override;
     void cleanup(const Engine* engine) override;
   };
-#ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
   class ChildProcVideo : public Strategy {
   public:
     ChildProcVideo(std::string cacheDir, std::string name);

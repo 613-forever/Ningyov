@@ -76,20 +76,22 @@ std::uint16_t WIDTH_BATCHES = 256;
 std::uint16_t THREAD_PER_BLOCK = 4;
 }
 
-void showFirstPixelForCuda(const unsigned char* cudaMemory, const char* prefix) {
 #if 0
+void showFirstPixelForCuda(const unsigned char* cudaMemory, const char* prefix) {
   unsigned char buffer[4];
   cudaMemcpy(buffer, cudaMemory, 4, cudaMemcpyDeviceToHost);
   BOOST_LOG_TRIVIAL(trace) << fmt::format("{} {:p}[{},{},{};{}]", prefix, cudaMemory,
                                           buffer[0], buffer[1], buffer[2], buffer[3]);
-#endif
 }
 
 void showFirstPixelForLocal(const unsigned char* memory, const char* prefix) {
-#if 0
   BOOST_LOG_TRIVIAL(trace) << fmt::format("{} {:p}[{},{},{};{}]", prefix, memory,
                                           memory[0], memory[1], memory[2], memory[3]);
-#endif
 }
+#else
+void showFirstPixelForCuda(const unsigned char*, const char*) {}
+void showFirstPixelForLocal(const unsigned char*, const char*) {}
+#endif
+
 
 }

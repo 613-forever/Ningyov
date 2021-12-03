@@ -3,7 +3,6 @@
 
 #include <dialog_video_generator/drawable.h>
 
-#include <dialog_video_generator/image.h>
 #include <dialog_video_generator/math/pos_arith.h>
 #include <utility>
 

@@ -3,8 +3,6 @@
 
 #include <dialog_video_generator/engine.h>
 
-#include <thread>
-#include <cuda_runtime.h>
 #include <dialog_video_generator/image.h>
 
 namespace dialog_video_generator { namespace engine {

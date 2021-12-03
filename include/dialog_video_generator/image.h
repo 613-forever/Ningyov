@@ -42,11 +42,11 @@ struct RawImage {
   Size size{std::array<UDim, 2>{0, 0}};
   CudaMemory memory{};
 
-//  void copyTo(const CudaMemory& target) const;
   void load(const std::string& dir, const std::string& filename, bool regis);
-  [[deprecated]] void write(const std::string& dir, const std::string& filename, std::atomic_int& counter);
+  [[deprecated]] void write(const std::string& dir, const std::string& filename, std::atomic_int& counter) {
+    toRawImage3().write(dir, filename, counter);
+  }
   RawImage3 toRawImage3();
-  [[deprecated]] void copyToMemory3(const std::function<void(CudaMemory&&, std::size_t)>& callback);
 
   static std::shared_ptr<RawImage> allocate(UDim height, UDim width) {
     return std::make_shared<RawImage>(RawImage{Size{height, width}, cuda::allocateMemory(height, width)});

@@ -148,21 +148,21 @@ void Engine::renderTasks(size_t startBuffer, size_t bg,
   auto tasksSizeInBytes = tasksSize * sizeof(DrawTask);
   auto cudaTasks = cuda::copyFromCPUMemory(tasks.data() + skippedTaskNumber, tasksSizeInBytes);
 
-  size_t destCount = getBufferCount() - startBuffer;
+  size_t dstCount = getBufferCount() - startBuffer;
   auto bufferRequired = tasksSize;
       // std::count_if(tasks.begin() + common613::checked_cast<std::ptrdiff_t>(skippedTaskNumber),
       //              tasks.end(), [](const DrawTask& task) { return !task.skip; });
-  COMMON613_REQUIRE(bufferRequired == destCount,
+  COMMON613_REQUIRE(bufferRequired == dstCount,
                     "Mismatching numbers of buffers {} (required by tasks) and {} (provided to rewrite).",
-                    bufferRequired, destCount);
+                    bufferRequired, dstCount);
   std::vector<unsigned char*> destinations;
-  destinations.reserve(destCount + 1);
+  destinations.reserve(dstCount + 1);
   destinations.push_back(buffers[bg]->memory.get());
   std::transform(buffers.begin() + common613::checked_cast<std::ptrdiff_t>(startBuffer),
                  buffers.begin() + common613::checked_cast<std::ptrdiff_t>(getBufferCount()),
                  std::back_inserter(destinations),
                  [](const std::shared_ptr<RawImage>& ptr) { return ptr->memory.get(); });
-  assert(destinations.size() == destCount + 1);
+  assert(destinations.size() == dstCount + 1);
   auto destinationsOnGPU = cuda::copyFromCPUMemory(destinations.data(), destinations.size() * sizeof(unsigned char*));
   cuda::renderTasks(reinterpret_cast<unsigned char**>(destinationsOnGPU.get()),
                     reinterpret_cast<DrawTask*>(cudaTasks.get()), tasksSize,

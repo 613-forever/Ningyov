@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#ifdef MADOMAGI_DIALOG_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
 #include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu16.04/boost1.76.
 #include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including "WinSock.h" repeatedly.

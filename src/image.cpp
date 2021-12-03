@@ -13,15 +13,11 @@ namespace dialog_video_generator { namespace image {
 
 std::unordered_map<std::string, RawImage> registeredImages(0x100); // NOLINT(cert-err58-cpp)
 
-//void RawImage::copyTo(const CudaMemory& target) const {
-//  cudaMemcpy(target.get(), memory.get(), size.h() * size.w() * Color4b::size, cudaMemcpyDeviceToDevice);
-//}
-
 void RawImage::load(const std::string& dir, const std::string& filename, bool regis) {
   {
-    auto iter = registeredImages.find(filename);
-    if (iter != registeredImages.end()) {
-      *this = iter->second;
+    auto it = registeredImages.find(filename);
+    if (it != registeredImages.end()) {
+      *this = it->second;
       return;
     }
   }
@@ -72,8 +68,8 @@ RawImage3::PNG& RawImage3::getLazyCPUMemory() {
   }
   if (!validLazyCPUMemory) {
     COMMON613_REQUIRE(size.total() * 3 == lazyCPUMemory->get_pixbuf().get_bytes().size(), "Found mismatching size.");
-    BOOST_LOG_TRIVIAL(trace) << fmt::format("Data in PNG object: [{},{},{}]", lazyCPUMemory->get_pixel(0, 0).red,
-                                            lazyCPUMemory->get_pixel(0, 0).green, lazyCPUMemory->get_pixel(0, 0).blue);
+//    BOOST_LOG_TRIVIAL(trace) << fmt::format("Data in PNG object: [{},{},{}]", lazyCPUMemory->get_pixel(0, 0).red,
+//                                            lazyCPUMemory->get_pixel(0, 0).green, lazyCPUMemory->get_pixel(0, 0).blue);
     cudaMemcpy(const_cast<png::byte*>(lazyCPUMemory->get_pixbuf().get_bytes().data()),
                memory.get(), size.total() * 3, cudaMemcpyDeviceToHost);
     validLazyCPUMemory = true;
@@ -81,21 +77,10 @@ RawImage3::PNG& RawImage3::getLazyCPUMemory() {
   return *lazyCPUMemory;
 }
 
-void RawImage::write(const std::string& dir, const std::string& filename, std::atomic_int& counter) {
-  toRawImage3().write(dir, filename, counter);
-}
-
 RawImage3 RawImage::toRawImage3() {
   auto memory3 = cuda::allocateMemory3(size.h(), size.w());
   cuda::copyRGBChannel(memory3.get(), memory.get());
   return RawImage3{size, memory3, {}};
-}
-
-void RawImage::copyToMemory3(const std::function<void(CudaMemory&&, std::size_t)>& addToQueue) {
-  auto memory3 = cuda::allocateMemory3(size.h(), size.w());
-  cuda::copyRGBChannel(memory3.get(), memory.get());
-  std::size_t bufferSize = size.total() * 3;
-  addToQueue(std::move(memory3), bufferSize);
 }
 
 void Image::addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool flip, std::vector<DrawTask>& tasks) const {

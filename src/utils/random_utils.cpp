@@ -5,6 +5,6 @@
 
 namespace dialog_video_generator {
 
-std::mt19937_64 gen(std::random_device{}());
+std::mt19937_64 gen(std::random_device{}()); // NOLINT(cert-err58-cpp)
 
 }

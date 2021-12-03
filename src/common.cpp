@@ -86,7 +86,7 @@ void initStdOut() {
 #ifdef _MSC_VER
   int res = _setmode(_fileno(stdout), _O_BINARY);
   BOOST_LOG_TRIVIAL(debug) << fmt::format("_setmode returns {:x}", res);
-  COMMON613_REQUIRE(res != -1, "setmode error, errno={}", errno);
+  COMMON613_REQUIRE(res != -1, "_setmode error, errno={}", errno);
 #else
   std::freopen(nullptr, "wb", stdout);
 #endif
