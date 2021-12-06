@@ -174,6 +174,48 @@ private:
 };
 #pragma clang diagnostic pop
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "NotImplementedFunctions"
+// TODO: not implemented
+class Shouting : public Animated {
+public:
+  Shouting(std::shared_ptr<Drawable> target);
+  ~Shouting() override;
+  Frames duration() const override;
+  std::size_t bufferCount() const override;
+  std::size_t nextFrame(Frames timeInScene) override;
+  void nextScene(bool stop, Frames point) override;
+  void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+private:
+  std::shared_ptr<Drawable> target;
+};
+#pragma clang diagnostic pop
+
+inline std::shared_ptr<Shouting> animateShouting(std::shared_ptr<Drawable> target) {
+  return std::make_shared<Shouting>(std::move(target));
+}
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "NotImplementedFunctions"
+// TODO: not implemented
+class Murmuring : public Animated {
+public:
+  Murmuring(std::shared_ptr<Drawable> target);
+  ~Murmuring() override;
+  Frames duration() const override;
+  std::size_t bufferCount() const override;
+  std::size_t nextFrame(Frames timeInScene) override;
+  void nextScene(bool stop, Frames point) override;
+  void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+private:
+  std::shared_ptr<Drawable> target;
+};
+#pragma clang diagnostic pop
+
+inline std::shared_ptr<Shouting> animateMurmuring(std::shared_ptr<Drawable> target) {
+  return std::make_shared<Shouting>(std::move(target));
+}
+
 }
 
 using drawable::Drawable;
