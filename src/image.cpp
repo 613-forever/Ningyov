@@ -7,7 +7,6 @@
 #include <thread>
 #include <cuda_runtime.h>
 #include <common613/compat/file_system.h>
-#include <dialog_video_generator/math/pos_arith.h>
 
 namespace dialog_video_generator { namespace image {
 
@@ -94,10 +93,6 @@ void Image::addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool 
       false, (this->flipX != flip),
       raw.memory.get(),
   });
-}
-
-Range Image::range(Vec2i offset) const {
-  return makeRange(pos + offset, raw.size);
 }
 
 } }

@@ -18,7 +18,7 @@ namespace dialog_video_generator { namespace image {
 
 struct RawImage3 {
   using PNG = png::image<png::rgb_pixel, png::solid_pixel_buffer<png::rgb_pixel>>;
-  Size size{std::array<UDim, 2>{0, 0}};
+  Size size{Size::of(0, 0)};
   CudaMemory memory{};
 
   void write(const std::string& dir, const std::string& filename, std::atomic_int& counter);
@@ -39,7 +39,7 @@ private:
 };
 
 struct RawImage {
-  Size size{std::array<UDim, 2>{0, 0}};
+  Size size{Size::of(0, 0)};
   CudaMemory memory{};
 
   void load(const std::string& dir, const std::string& filename, bool regis);
@@ -49,7 +49,7 @@ struct RawImage {
   RawImage3 toRawImage3();
 
   static std::shared_ptr<RawImage> allocate(UDim height, UDim width) {
-    return std::make_shared<RawImage>(RawImage{Size{height, width}, cuda::allocateMemory(height, width)});
+    return std::make_shared<RawImage>(RawImage{Size::of(height, width), cuda::allocateMemory(height, width)});
   }
 };
 
@@ -58,11 +58,10 @@ extern std::unordered_map<std::string, RawImage> registeredImages;
 struct Image {
   RawImage raw;
   unsigned int mul{1};
-  Vec2i pos{std::array<Dim, 2>{0, 0}};
+  Vec2i pos{Vec2i::of(0, 0)};
   bool flipX{false};
 
   void addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool flip, std::vector<DrawTask>& tasks) const;
-  Range range(Vec2i offset) const;
 };
 
 }

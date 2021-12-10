@@ -19,10 +19,8 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   std::string posDir = dir + pose + '/', poseUpper(pose.size(), '\0');
   std::transform(pose.begin(), pose.end(), poseUpper.begin(), [](char c){return std::toupper(c);});
   image.raw.load(posDir, poseUpper, true);
-  image.pos = {
-      static_cast<Dim>(-image.raw.size.w() * mul / 2),
-      static_cast<Dim>(-image.raw.size.h() * mul),
-  };
+  image.pos.x() = -checked_cast<Dim>(image.raw.size.w() * mul / 2);
+  image.pos.y() = -checked_cast<Dim>(image.raw.size.h() * mul); // unchecked cast
   std::uint32_t pos[4];
   {
     File file = file::open(posDir + poseUpper + ".POS", "rb");
@@ -34,7 +32,7 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   eye[1].raw.load(posDir, expressionPrefix + "_E1", true);
   eye[2].raw.load(posDir, expressionPrefix + "_E2", true);
   eye[3].raw.load(posDir, expressionPrefix + "_E3", true);
-  Vec2i eyeOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? eye[0].raw.size.w() - 1 - pos[0] : pos[0]), static_cast<Dim>(pos[1]) } * checked_cast<Dim>(mul);
+  Vec2i eyeOffset = image.pos + Vec2i::of(flip ? eye[0].raw.size.w() - 1 - pos[0] : pos[0], pos[1]) * mul;
   for (auto& eyeImage : eye) {
     eyeImage.mul = mul;
     eyeImage.pos = eyeOffset;
@@ -44,7 +42,7 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   mouth[0].raw.load(posDir, expressionPrefix + "_M0", true);
   mouth[1].raw.load(posDir, expressionPrefix + "_M1", true);
   mouth[2].raw.load(posDir, expressionPrefix + "_M2", true);
-  Vec2i mouthOffset = image.pos + Vec2i{ static_cast<Dim>(flip ? mouth[0].raw.size.w() - 1 - pos[2] : pos[2]), static_cast<Dim>(pos[3]) } * checked_cast<Dim>(mul);
+  Vec2i mouthOffset = image.pos + Vec2i::of(flip ? mouth[0].raw.size.w() - 1 - pos[2] : pos[2], pos[3]) * mul;
   for (auto& mouthImage : mouth) {
     mouthImage.mul = mul;
     mouthImage.pos = mouthOffset;
@@ -65,8 +63,8 @@ std::size_t Stand::bufferCount() const {
 std::size_t Stand::nextFrame(Frames timeInScene) {
   int last = mouthStatus;
   int ret = 0;
-  if (speaking.count > 0 && timeInScene <= speaking) {
-    if (timeInScene.count % 3 == 0) {
+  if (speaking > 0_fr && timeInScene <= speaking) {
+    if (timeInScene.x() % 3 == 0) {
       switch (mouthStatus) {
       case 0: {
         std::bernoulli_distribution dist(0.8);
@@ -92,11 +90,13 @@ std::size_t Stand::nextFrame(Frames timeInScene) {
     ret = 1;
   }
   if (eyeBlinkCountDown != nullptr) {
-    if (*eyeBlinkCountDown < 7) {
-      eyeStatus = *eyeBlinkCountDown >= 4 ? 6 - *eyeBlinkCountDown : *eyeBlinkCountDown;
+    if (eyeBlinkCountDown->x() < 7) {
+      eyeStatus = eyeBlinkCountDown->x() >= 4 ? 6 - eyeBlinkCountDown->x() : eyeBlinkCountDown->x();
       ret = 2;
     }
-    --*eyeBlinkCountDown;
+    if (--eyeBlinkCountDown->x() == 0) {
+      refreshEyeBlinkCountDown(eyeBlinkCountDown);
+    }
   }
   return ret;
 }
@@ -111,12 +111,17 @@ void Stand::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tas
   mouth[mouthStatus].addTask(offset, false, alpha, false, tasks);
 }
 
-void Stand::setSpeakingDuration(Frames frames) {
-  speaking = frames;
+void Stand::setSpeakingDuration(Frames duration) {
+  speaking = duration;
 }
 
-void Stand::bindEyeStatus(int* countdown) {
+void Stand::bindEyeStatus(Frames* countdown) {
   eyeBlinkCountDown = countdown;
+}
+
+void Stand::refreshEyeBlinkCountDown(Frames* countDown) {
+  std::uniform_int_distribution<typename Frames::valueType> dist((3_sec).x(), (4_sec).x());
+  countDown->x() = dist(gen);
 }
 
 } }

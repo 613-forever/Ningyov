@@ -13,7 +13,7 @@ Engine::StdoutStreaming::StdoutStreaming() {
 
 Engine::StdoutStreaming::~StdoutStreaming() = default;
 
-void Engine::StdoutStreaming::handleFrame(const Engine* engine, int index) {
+void Engine::StdoutStreaming::handleFrame(const Engine* engine, size_t index) {
   engine->lastLayerRGB->write(std::cout);
 }
 

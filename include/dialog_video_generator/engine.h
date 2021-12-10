@@ -41,7 +41,7 @@ class Strategy {
 public:
   virtual ~Strategy() = 0;
   virtual void init(const Engine*) {}
-  virtual void handleFrame(const Engine* engine, int index) {}
+  virtual void handleFrame(const Engine* engine, size_t index) {}
   virtual void cleanup(const Engine*) {}
 };
 
@@ -94,7 +94,7 @@ public:
   public:
     SaveFrameByFrame(std::string targetDir, std::string format);
     void init(const Engine* engine) override;
-    void handleFrame(const Engine* engine, int index) override;
+    void handleFrame(const Engine* engine, size_t index) override;
   private:
     std::string targetDir, format;
   };
@@ -102,7 +102,7 @@ public:
   public:
     SaveIntermediateResults(std::string cacheDir, std::string format);
     void init(const Engine* engine) override;
-    void handleFrame(const Engine* engine, int index) override;
+    void handleFrame(const Engine* engine, size_t index) override;
   private:
     std::string targetDir, format;
   };
@@ -140,7 +140,7 @@ public:
   public:
     StdoutStreaming();
     ~StdoutStreaming() override;
-    void handleFrame(const Engine* engine, int index) override;
+    void handleFrame(const Engine* engine, size_t index) override;
     void cleanup(const Engine* engine) override;
   };
 #ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
@@ -149,7 +149,7 @@ public:
     ChildProcVideo(std::string cacheDir, std::string name);
     ~ChildProcVideo() override;
     void init(const Engine* engine) override;
-    void handleFrame(const Engine* engine, int index) override;
+    void handleFrame(const Engine* engine, size_t index) override;
     void cleanup(const Engine* engine) override;
 
     struct State;

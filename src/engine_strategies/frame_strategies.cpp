@@ -15,7 +15,7 @@ Engine::SaveFrameByFrame::SaveFrameByFrame(std::string targetDir, std::string fo
   BOOST_LOG_TRIVIAL(info) << fmt::format("Frames will be saved in: \"{}\".", this->targetDir);
 }
 
-void Engine::SaveFrameByFrame::handleFrame(const Engine* engine, int index) {
+void Engine::SaveFrameByFrame::handleFrame(const Engine* engine, size_t index) {
   engine->lastLayerRGB->write(targetDir, fmt::format(format, index), engine->counter);
 }
 
@@ -31,7 +31,7 @@ Engine::SaveIntermediateResults::SaveIntermediateResults(std::string targetDir, 
   BOOST_LOG_TRIVIAL(info) << fmt::format("Intermediate results will be saved in: \"{}\".", this->targetDir);
 }
 
-void Engine::SaveIntermediateResults::handleFrame(const Engine* engine, int index) {
+void Engine::SaveIntermediateResults::handleFrame(const Engine* engine, size_t index) {
   for (int layerIndex = 0; layerIndex < engine->getBufferCount(); ++layerIndex) {
     engine->buffers[layerIndex]->toRawImage3().write(targetDir, fmt::format(format, index, layerIndex), engine->counter);
   }

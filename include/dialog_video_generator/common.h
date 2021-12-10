@@ -9,10 +9,12 @@
 #include <memory>
 #include <cstdint>
 #include <common613/assert.h>
+#include <common613/checked_cast.h>
 
 namespace dialog_video_generator {
 
 using namespace std::literals;
+using common613::checked_cast;
 
 namespace config {
 extern std::uint16_t FRAMES_PER_SECOND;

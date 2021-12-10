@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#include <dialog_video_generator/multi_scene/character.h>
+#include <dialog_video_generator/abstraction/character.h>
 
 #include <dialog_video_generator/drawable.h>
 
@@ -9,26 +9,27 @@ using namespace dialog_video_generator::drawable;
 
 namespace dialog_video_generator {
 namespace config {
-std::uint16_t STAND_MULTIPLIER = 3;
+std::uint16_t STAND_MULTIPLIER = 4;
 }
 
-namespace multi_scene {
+namespace abstraction {
 
 Character::Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson /* = false */) :
-    hasStandToDraw(false), drawStand(false), isFirstPerson(firstPerson), eyeBinder{},
+    hasStandToDraw(false), drawStand(false), isFirstPerson(firstPerson), eyeBinder{0_fr},
     action{}, actionAnimated{true}, offset{},
     dlgFmt(dialogFormat), poseFmt{}, exprFmt{} {
-  loadDialogResources(isFirstPerson);
+  clearDialogResources(isFirstPerson);
 }
 
 Character::Character(const std::string& dialogDir, const std::string& dialogFormat,
                      const std::string& standRootDir, const std::string& poseFormat, const std::string& exprFormat,
                      Vec2i bottomCenterOffset, bool firstPerson /* = isFalse */, bool drawStand /* = true */) :
-    hasStandToDraw(true), drawStand(drawStand), isFirstPerson(firstPerson), eyeBinder(0),
-    action{Action::NORMAL}, actionAnimated{true}, offset{},
+    hasStandToDraw(true), drawStand(drawStand), isFirstPerson(firstPerson), eyeBinder{0_fr},
+    action{Action::NORMAL}, actionAnimated{true}, offset{bottomCenterOffset},
     dlgDir(dialogDir), standDir(standRootDir),
     dlgFmt(dialogFormat), poseFmt(poseFormat), exprFmt(exprFormat) {
-  loadDialogResources(isFirstPerson);
+  clearDialogResources(isFirstPerson);
+  initEyeBinder();
 }
 
 Character::~Character() = default;
@@ -44,18 +45,43 @@ void Character::setAction(Action newAction) {
   }
 }
 
-void Character::loadDialogResources(bool firstPerson) {
-  if (isFirstPerson) {
-    dialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt + FIRST_PERSON, ACTION_NORMAL));
-    thinkingDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt + FIRST_PERSON, ACTION_THINKING));
-    shoutingDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt + FIRST_PERSON, ACTION_SHOUTING));
-    murmuringDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt + FIRST_PERSON, ACTION_MURMURING));
-  } else {
-    dialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt, ACTION_NORMAL));
-    thinkingDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt, ACTION_THINKING));
-    shoutingDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt, ACTION_SHOUTING));
-    murmuringDialog = std::make_shared<Texture>(dlgDir, fmt::format(dlgFmt, ACTION_MURMURING));
+void Character::clearDialogResources(bool firstPerson) {
+  dialog = nullptr;
+  thinkingDialog = nullptr;
+  shoutingDialog = nullptr;
+  murmuringDialog = nullptr;
+}
+
+void Character::initEyeBinder() {
+  Stand::refreshEyeBlinkCountDown(&eyeBinder);
+}
+
+std::shared_ptr<drawable::Texture> Character::getNormalDialog() {
+  if (!dialog) {
+    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_NORMAL + FIRST_PERSON);
   }
+  return dialog;
+}
+
+std::shared_ptr<drawable::Texture> Character::getThinkingDialog() {
+  if (!dialog) {
+    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_THINKING + FIRST_PERSON);
+  }
+  return dialog;
+}
+
+std::shared_ptr<drawable::Texture> Character::getShoutingDialog() {
+  if (!dialog) {
+    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_SHOUTING + FIRST_PERSON);
+  }
+  return dialog;
+}
+
+std::shared_ptr<drawable::Texture> Character::getMurmuringDialog() {
+  if (!dialog) {
+    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_MURMURING + FIRST_PERSON);
+  }
+  return dialog;
 }
 
 void Character::keepsAllInNextScene() {
@@ -83,8 +109,10 @@ void Character::movesInNextScene(const std::string& pose, const std::string& exp
 
 void Character::speaksInNextScene(const TextLike& lines, Action newAction /*= Action::NO_CHANGE*/) {
   nextScene();
-  COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
-  stand->setSpeakingDuration(lines.duration());
+  if (hasStandToDraw && drawStand) {
+    COMMON613_REQUIRE(stand != nullptr, "Setting character speaking before expression.");
+    stand->setSpeakingDuration(lines.duration());
+  }
   setAction(newAction);
 }
 
@@ -117,22 +145,27 @@ std::shared_ptr<Drawable> Character::getStand() {
   }
 }
 
-std::shared_ptr<Drawable> Character::getSpeakingDialog(std::shared_ptr<Texture>& speaking) {
+std::shared_ptr<Drawable> Character::getSpeakingDialog(std::shared_ptr<Drawable>& speaking) {
   switch (action) {
   case Action::THINKING:
-    return thinkingDialog;
+    return getThinkingDialog();
   case Action::SHOUTING:
-    return shoutingDialog;
+    if (!actionAnimated) {
+      speaking = animateShouting(speaking);
+    }
+    return getShoutingDialog();
   case Action::MURMURING:
-    return murmuringDialog;
+    if (!actionAnimated) {
+      speaking = animateMurmuring(speaking);
+    }
+    return getMurmuringDialog();
   default:
-    return dialog;
+    return getNormalDialog();
   }
 }
 
 void Character::nextAct(bool firstPerson /*= false*/) {
-  this->isFirstPerson = firstPerson;
-  loadDialogResources(firstPerson);
+  clearDialogResourcesIfChanged(firstPerson);
   nextScene();
 }
 

@@ -5,7 +5,6 @@
 
 #include <tinyutf8/tinyutf8.h>
 #include <dialog_video_generator/text/text_render_details.h>
-#include <dialog_video_generator/math/pos_arith.h>
 
 using namespace common613;
 
@@ -20,7 +19,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
   for (char32_t c : buffer) {
     FT_GlyphSlot slot = font::loadGlyph(font::faceForChineseText, c);
     assert(slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
-    const Size glyphSize{checked_cast<UDim>(slot->bitmap.rows), checked_cast<UDim>(slot->bitmap.width)};
+    const Size glyphSize = Size::of(slot->bitmap.rows, slot->bitmap.width);
     if (glyphSize.total() == 0) {
       BOOST_LOG_TRIVIAL(debug) << fmt::format("Empty glyph for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
     } else {
@@ -65,7 +64,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
 TextLike::~TextLike() = default;
 
 Frames TextLike::duration() const {
-  return Frames{checked_cast<int>((speedDen * (glyphs.size() - start) + speedNum - 1) / speedNum + 1)};
+  return Frames::of((speedDen * (glyphs.size() - start) + speedNum - 1) / speedNum + 1);
 }
 
 std::size_t TextLike::bufferCount() const {
@@ -75,7 +74,7 @@ std::size_t TextLike::bufferCount() const {
 std::size_t TextLike::nextFrame(Frames timeInScene) {
   std::size_t last = current;
   if (last < glyphs.size()) {
-    current = start + (timeInScene.count * speedNum + speedDen - 1) / speedDen;
+    current = start + (timeInScene.x() * speedNum + speedDen - 1) / speedDen;
     if (current > glyphs.size()) {
       current = glyphs.size();
     }

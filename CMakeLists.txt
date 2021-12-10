@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.17)
 
-project("DialogGenerator"
-        VERSION 1.0.1
+project("DialogVideoGenerator"
+        VERSION 1.1.0
         DESCRIPTION "Dialog video/picture generator"
         LANGUAGES CXX CUDA
         )
@@ -21,7 +21,7 @@ endif()
 cmake_policy(SET CMP0104 OLD)
 find_package(CUDAToolkit 10 REQUIRED)
 
-find_package(Common613 REQUIRED)
+find_package(Common613 1.1.0 REQUIRED)
 
 set(png++_ROOT_DIR "thirdparty/png++-0.2.9")
 find_package(png++ REQUIRED)
@@ -65,19 +65,20 @@ set(${PROJECT_NAME}_SOURCES
         cuda/cuda_utils.cpp cuda/cuda_images.cu
         utils/text_render_utils.cpp
         image.cpp
-        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp
+        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp drawables/action_animation.cpp
         engine.cpp
         engine_strategies/frame_strategies.cpp engine_strategies/streaming_strategy.cpp engine_strategies/child_proc_strategy.cpp
         )
 
 set(${PROJECT_NAME}_FACADE_HEADERS
-        multi_scene/character.h # multiscene
-#        multi_scene/director.h # director facade
+        abstraction/character.h # multiscene
+        abstraction/position.h #
+#        abstraction/director.h # director facade
         )
 
 set(${PROJECT_NAME}_FACADE_SOURCES
-        multi_scene/character.cpp
-#        multi_scene/director.cpp
+        abstraction/character.cpp
+#        abstraction/director.cpp
         )
 
 list(TRANSFORM ${PROJECT_NAME}_HEADERS PREPEND "include/dialog_video_generator/" OUTPUT_VARIABLE ${PROJECT_NAME}_HEADERS_RELATIVE)
@@ -93,7 +94,6 @@ target_include_directories(
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
-        ${Common613_INCLUDE_DIRS}
         ${png++_INCLUDE_DIRS}
         ${TinyUTF8_INCLUDE_DIRS}
 )
@@ -101,21 +101,17 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         CUDA::cudart
         CUDA::cudart_static
         CUDA::cuda_driver
-        ${Common613_LIBRARIES}
         ${png++_LIBRARIES}
-        Boost::log
-        Boost::log_setup
-        Boost::filesystem
-        fmt::fmt
         Freetype::Freetype
         ${TinyUTF8_LIBRARIES}
+        Common613::Common613
 )
 
 add_library(${PROJECT_NAME}_FACADE STATIC
         ${${PROJECT_NAME}_FACADE_HEADERS_RELATIVE} ${${PROJECT_NAME}_FACADE_SOURCES_RELATIVE})
 target_include_directories(
         ${PROJECT_NAME}_FACADE PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:"${DialogVideoGenerator_SOURCE_DIR};${DialogVideoGenerator_SOURCE_DIR}/include">
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_include_directories(${PROJECT_NAME}_FACADE PUBLIC
@@ -123,6 +119,6 @@ target_include_directories(${PROJECT_NAME}_FACADE PUBLIC
         ${png++_INCLUDE_DIRS}
         ${TinyUTF8_INCLUDE_DIRS}
 )
-target_link_libraries(${PROJECT_NAME}_FACADE PUBLIC ${PROJECT_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_FACADE PUBLIC ${PROJECT_NAME})
 
 add_subdirectory("test")

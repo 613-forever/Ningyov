@@ -8,6 +8,7 @@
 #include <png.hpp>
 #include <boost/filesystem.hpp>
 #include <dialog_video_generator/drawable.h>
+#include <common613/vector_arith_utils.h>
 
 namespace dialog_video_generator {
 namespace engine {
@@ -15,7 +16,7 @@ namespace engine {
 Strategy::~Strategy() = default;
 
 Engine::Engine(std::vector<std::unique_ptr<Strategy>>&& strategies, Frames s)
-    : start(s), wait{0}, activeCache{0}, strategies(std::move(strategies)), counter(0), lastLayerRGB{} {
+    : start(s), wait{0_fr}, activeCache{0_fr}, strategies(std::move(strategies)), counter(0), lastLayerRGB{} {
   for (auto& strategy: this->strategies) {
     strategy->init(this);
   }
@@ -44,14 +45,14 @@ void Engine::nextScene(bool stop) {
 
 void Engine::renderScene() const {
   // for frames render
-  BOOST_LOG_TRIVIAL(info) << fmt::format("Rendering Frame {}.", start.count);
+  BOOST_LOG_TRIVIAL(info) << fmt::format("Rendering Frame {}.", start.x());
   renderFirstFrame();
   for (auto& strategy: strategies) {
-    strategy->handleFrame(this, start.count);
+    strategy->handleFrame(this, start.x());
   }
 
   for (auto time = 1_fr; time < getTotalLength(); time = time + 1_fr) {
-    auto index = (start + time).count;
+    auto index = (start + time).x();
     BOOST_LOG_TRIVIAL(info) << fmt::format("Rendering Frame {}.", index);
     renderNonFirstFrame(time);
     COMMON613_REQUIRE(index > 0 && index < 1'0000'0000, "Index is invalid: {}", index);
@@ -178,8 +179,8 @@ void Engine::setTotalLength(Frames fr) {
 }
 
 Frames Engine::getActiveLength() const {
-  if (activeCache.count == 0) {
-    Frames longest{1}; // at least 1 frame
+  if (activeCache.x() == 0) {
+    Frames longest{1_fr}; // at least 1 frame
     for (const auto& layer: layers) {
       auto duration = layer->duration();
       if (duration > longest) {

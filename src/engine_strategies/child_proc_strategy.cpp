@@ -51,7 +51,7 @@ void Engine::ChildProcVideo::init(const Engine* engine) {
   state->stream = std::move(stream);
 }
 
-void Engine::ChildProcVideo::handleFrame(const Engine* engine, int index) {
+void Engine::ChildProcVideo::handleFrame(const Engine* engine, size_t index) {
   assert(state != nullptr);
   engine->lastLayerRGB->write(*state->stream);
 }

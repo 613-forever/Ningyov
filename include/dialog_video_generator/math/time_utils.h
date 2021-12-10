@@ -6,53 +6,32 @@
 #define DIALOGVIDEOGENERATOR_TIME_UTILS_H
 
 #include <chrono>
-#include <common613/arith_utils.h>
 #include <dialog_video_generator/common.h>
+#include <common613/vector_definitions.h>
 
 namespace dialog_video_generator { namespace time {
 
-struct Frames {
-  int count;
+struct Frames : common613::ArrNi<true, std::size_t, 1> {
+  constexpr Frames(const Frames& other) = default; // prevent resolution problem when copying
+  constexpr Frames(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)
+  template <class NumT>
+  static Frames of(NumT num) { return Frames{ArrNi::of(num)}; }
 };
 
-COMMON613_NODISCARD
-inline Frames operator+(Frames lhs, Frames rhs) {
-  return {lhs.count + rhs.count};
+inline Frames frames(unsigned long long i) {
+  return Frames::of(i);
 }
-
-COMMON613_NODISCARD
-inline Frames operator-(Frames lhs, Frames rhs) {
-  return {lhs.count - rhs.count};
+inline Frames seconds(unsigned long long i) {
+  return Frames::of(i * config::FRAMES_PER_SECOND);
 }
-
-COMMON613_NODISCARD
-inline bool operator==(const Frames& lhs, const Frames& rhs) {
-  return lhs.count == rhs.count;
+inline Frames seconds(long double i) {
+  return Frames::of(std::round(i * config::FRAMES_PER_SECOND));
 }
-
-COMMON613_NODISCARD
-inline bool operator!=(const Frames& lhs, const Frames& rhs) {
-  return lhs.count != rhs.count;
+inline Frames minutes(unsigned long long i) {
+  return Frames::of(i * 60 * config::FRAMES_PER_SECOND);
 }
-
-COMMON613_NODISCARD
-inline bool operator<(const Frames& lhs, const Frames& rhs) {
-  return lhs.count < rhs.count;
-}
-
-COMMON613_NODISCARD
-inline bool operator<=(const Frames& lhs, const Frames& rhs) {
-  return lhs.count <= rhs.count;
-}
-
-COMMON613_NODISCARD
-inline bool operator>(const Frames& lhs, const Frames& rhs) {
-  return lhs.count > rhs.count;
-}
-
-COMMON613_NODISCARD
-inline bool operator>=(const Frames& lhs, const Frames& rhs) {
-  return lhs.count >= rhs.count;
+inline Frames minutes(long double i) {
+  return Frames::of(std::round(i * 60 * config::FRAMES_PER_SECOND));
 }
 
 }
@@ -60,19 +39,19 @@ inline bool operator>=(const Frames& lhs, const Frames& rhs) {
 using time::Frames;
 
 inline Frames operator ""_fr(unsigned long long i) {
-  return Frames{common613::checked_cast<int>(i)};
+  return time::frames(i);
 }
 inline Frames operator ""_sec(unsigned long long i) {
-  return Frames{common613::checked_cast<int>(i * config::FRAMES_PER_SECOND)};
+  return time::seconds(i);
 }
 inline Frames operator ""_sec(long double i) {
-  return Frames{common613::checked_cast<int>(std::round(i * config::FRAMES_PER_SECOND))};
+  return time::seconds(i);
 }
 inline Frames operator ""_min(unsigned long long i) {
-  return Frames{common613::checked_cast<int>(i * 60 * config::FRAMES_PER_SECOND)};
+  return time::minutes(i);
 }
 inline Frames operator ""_min(long double i) {
-  return Frames{common613::checked_cast<int>(std::round(i * 60 * config::FRAMES_PER_SECOND))};
+  return time::minutes(i);
 }
 
 }

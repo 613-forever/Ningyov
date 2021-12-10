@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#ifndef DIALOGGENERATOR_POSITION_H
-#define DIALOGGENERATOR_POSITION_H
+#ifndef DIALOGVIDEOGENERATOR_POSITION_H
+#define DIALOGVIDEOGENERATOR_POSITION_H
 
 #include <dialog_video_generator/common.h>
 #include <dialog_video_generator/math/pos_utils.h>
-#include <common613/arith_utils.h>
 
 namespace dialog_video_generator {
 namespace position {
@@ -30,11 +29,9 @@ enum Position : std::int8_t {
   BORDER_RIGHT = MIDDLE + (4 << POSITION_RESOLUTION_LEFT_SHIFT),
 };
 
-inline Pos2i enumToPosition(Position position) {
-  return Pos2i{
-      common613::checked_cast<Dim>((config::WIDTH * (position - BORDER_LEFT) + (1 << (POSITION_MAX_BIAS_LEFT_SHIFT - 1))) >> POSITION_MAX_BIAS_LEFT_SHIFT),
-      common613::checked_cast<Dim>(config::HEIGHT)
-  };
+inline Vec2i enumToPosition(Position position) {
+  return Vec2i::of((config::WIDTH * (position - BORDER_LEFT) + (1 << (POSITION_MAX_BIAS_LEFT_SHIFT - 1)))
+                       >> POSITION_MAX_BIAS_LEFT_SHIFT, config::HEIGHT);
 }
 
 }
@@ -43,4 +40,4 @@ using position::Position; // use Pos2i to specify non-semantic positions.
 
 }
 
-#endif //DIALOGGENERATOR_POSITION_H
+#endif //DIALOGVIDEOGENERATOR_POSITION_H
