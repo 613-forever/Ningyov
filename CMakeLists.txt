@@ -65,19 +65,21 @@ set(${PROJECT_NAME}_SOURCES
         cuda/cuda_utils.cpp cuda/cuda_images.cu
         utils/text_render_utils.cpp
         image.cpp
-        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp drawables/action_animation.cpp
+        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp
         engine.cpp
         engine_strategies/frame_strategies.cpp engine_strategies/streaming_strategy.cpp engine_strategies/child_proc_strategy.cpp
         )
 
 set(${PROJECT_NAME}_FACADE_HEADERS
         abstraction/character.h # multiscene
-        abstraction/position.h #
+        abstraction/position.h # abstract position
+        abstraction/action_animation.h abstraction/dialog.h
 #        abstraction/director.h # director facade
         )
 
 set(${PROJECT_NAME}_FACADE_SOURCES
         abstraction/character.cpp
+        abstraction/action_animation.cpp abstraction/dialog.cpp
 #        abstraction/director.cpp
         )
 

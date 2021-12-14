@@ -58,6 +58,8 @@ private:
   std::shared_ptr<drawable::Texture> getShoutingDialog();
   std::shared_ptr<drawable::Texture> getMurmuringDialog();
 
+  std::shared_ptr<drawable::Texture> getCurrentDialog();
+
 public:
   void keepsAllInNextScene();
   void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip);
@@ -67,7 +69,7 @@ public:
                                        const drawable::TextLike& lines, Action newAction = Action::NO_CHANGE);
 
   std::shared_ptr<drawable::Drawable> getStand();
-  std::shared_ptr<drawable::Drawable> getSpeakingDialog(std::shared_ptr<drawable::Drawable>& speaking);
+  std::shared_ptr<drawable::Drawable> getDialog(const std::shared_ptr<drawable::TextLike>& speaking);
 
   void nextAct(bool firstPerson = false); // next act, clear FP flags
 

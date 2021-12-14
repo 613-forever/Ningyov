@@ -156,32 +156,6 @@ protected:
   Vec2i frameOffset;
 };
 
-class Shouting : public Movement {
-public:
-  explicit Shouting(std::shared_ptr<Drawable> target);
-  ~Shouting() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
-private:
-  constexpr static const long double LENGTH_SECOND = 0.5;
-};
-
-inline std::shared_ptr<Shouting> animateShouting(std::shared_ptr<Drawable> target) {
-  return std::make_shared<Shouting>(std::move(target));
-}
-
-class Murmuring : public Movement {
-public:
-  explicit Murmuring(std::shared_ptr<Drawable> target);
-  ~Murmuring() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
-private:
-  constexpr static const long double LENGTH_SECOND = 2;
-};
-
-inline std::shared_ptr<Shouting> animateMurmuring(std::shared_ptr<Drawable> target) {
-  return std::make_shared<Shouting>(std::move(target));
-}
-
 }
 
 using drawable::Drawable;

@@ -94,8 +94,10 @@ std::size_t Stand::nextFrame(Frames timeInScene) {
       eyeStatus = eyeBlinkCountDown->x() >= 4 ? 6 - eyeBlinkCountDown->x() : eyeBlinkCountDown->x();
       ret = 2;
     }
-    if (--eyeBlinkCountDown->x() == 0) {
+    if (eyeBlinkCountDown->x() == 0) {
       refreshEyeBlinkCountDown(eyeBlinkCountDown);
+    } else {
+      --eyeBlinkCountDown->x();
     }
   }
   return ret;

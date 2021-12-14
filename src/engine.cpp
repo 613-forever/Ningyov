@@ -101,8 +101,9 @@ void Engine::renderFirstFrame() const {
     }
     prepareMiddleResultBuffers(bufferIndices.back());
     for (std::size_t i = 0, buf = 1; i < layers.size(); ++i) {
-      BOOST_LOG_TRIVIAL(trace) << fmt::format("Layer {} will write {} buffers [{},{}).",
-                                              i, bufferCount[i], buf, bufferIndices[i]);
+      BOOST_LOG_TRIVIAL(trace) << (bufferCount[i] == 1 ? fmt::format("Layer {} will write 1 buffer [{}].", i, buf) :
+                                   fmt::format("Layer {} will write {} buffers [{},{}).",
+                                               i, bufferCount[i], buf, bufferIndices[i]));
       buf = bufferIndices[i];
     }
     renderTasks(1, 0, tasks, 0);
@@ -151,8 +152,8 @@ void Engine::renderTasks(size_t startBuffer, size_t bg,
 
   size_t dstCount = getBufferCount() - startBuffer;
   auto bufferRequired = tasksSize;
-      // std::count_if(tasks.begin() + common613::checked_cast<std::ptrdiff_t>(skippedTaskNumber),
-      //              tasks.end(), [](const DrawTask& task) { return !task.skip; });
+  // std::count_if(tasks.begin() + common613::checked_cast<std::ptrdiff_t>(skippedTaskNumber),
+  //              tasks.end(), [](const DrawTask& task) { return !task.skip; });
   COMMON613_REQUIRE(bufferRequired == dstCount,
                     "Mismatching numbers of buffers {} (required by tasks) and {} (provided to rewrite).",
                     bufferRequired, dstCount);

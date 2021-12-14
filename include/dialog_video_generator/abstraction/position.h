@@ -31,7 +31,7 @@ enum Position : std::int8_t {
 
 inline Vec2i enumToPosition(Position position) {
   return Vec2i::of((config::WIDTH * (position - BORDER_LEFT) + (1 << (POSITION_MAX_BIAS_LEFT_SHIFT - 1)))
-                       >> POSITION_MAX_BIAS_LEFT_SHIFT, config::HEIGHT);
+                       >> POSITION_MAX_BIAS_LEFT_SHIFT, config::HEIGHT * 9 / 8);
 }
 
 }

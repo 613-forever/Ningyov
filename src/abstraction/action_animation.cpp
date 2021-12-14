@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#include <dialog_video_generator/drawable.h>
+#include <dialog_video_generator/abstraction/action_animation.h>
 
 #include <dialog_video_generator/math/pos_arith.h>
 
 using common613::checked_cast;
 
-namespace dialog_video_generator { namespace drawable {
+namespace dialog_video_generator { namespace abstraction {
 
-Shouting::Shouting(std::shared_ptr<Drawable> target) :
-Movement(std::move(target), time::seconds(LENGTH_SECOND)) {}
+Shouting::Shouting(std::shared_ptr<Drawable> target)
+: Movement(std::move(target), time::seconds(LENGTH_SECOND)) {}
 
 Shouting::~Shouting() = default;
 
@@ -25,8 +25,8 @@ Vec2i Shouting::calculateOffset(Frames duration) const {
   )};
 }
 
-Murmuring::Murmuring(std::shared_ptr<Drawable> target) :
-Movement(std::move(target), time::seconds(LENGTH_SECOND)) {}
+Murmuring::Murmuring(std::shared_ptr<Drawable> target)
+: Movement(std::move(target), time::seconds(LENGTH_SECOND)) {}
 
 Murmuring::~Murmuring() = default;
 

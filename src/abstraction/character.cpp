@@ -3,7 +3,8 @@
 
 #include <dialog_video_generator/abstraction/character.h>
 
-#include <dialog_video_generator/drawable.h>
+#include <dialog_video_generator/abstraction/action_animation.h>
+#include <dialog_video_generator/abstraction/dialog.h>
 
 using namespace dialog_video_generator::drawable;
 
@@ -56,32 +57,45 @@ void Character::initEyeBinder() {
   Stand::refreshEyeBlinkCountDown(&eyeBinder);
 }
 
-std::shared_ptr<drawable::Texture> Character::getNormalDialog() {
+std::shared_ptr<Texture> Character::getNormalDialog() {
   if (!dialog) {
     dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_NORMAL + FIRST_PERSON);
   }
   return dialog;
 }
 
-std::shared_ptr<drawable::Texture> Character::getThinkingDialog() {
+std::shared_ptr<Texture> Character::getThinkingDialog() {
   if (!dialog) {
     dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_THINKING + FIRST_PERSON);
   }
   return dialog;
 }
 
-std::shared_ptr<drawable::Texture> Character::getShoutingDialog() {
+std::shared_ptr<Texture> Character::getShoutingDialog() {
   if (!dialog) {
     dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_SHOUTING + FIRST_PERSON);
   }
   return dialog;
 }
 
-std::shared_ptr<drawable::Texture> Character::getMurmuringDialog() {
+std::shared_ptr<Texture> Character::getMurmuringDialog() {
   if (!dialog) {
     dialog = std::make_shared<Texture>(dlgDir, dlgFmt + ACTION_MURMURING + FIRST_PERSON);
   }
   return dialog;
+}
+
+std::shared_ptr<Texture> Character::getCurrentDialog() {
+  switch (action) {
+  case Action::THINKING:
+    return getThinkingDialog();
+  case Action::SHOUTING:
+    return getShoutingDialog();
+  case Action::MURMURING:
+    return getMurmuringDialog();
+  default:
+    return getNormalDialog();
+  }
 }
 
 void Character::keepsAllInNextScene() {
@@ -145,22 +159,28 @@ std::shared_ptr<Drawable> Character::getStand() {
   }
 }
 
-std::shared_ptr<Drawable> Character::getSpeakingDialog(std::shared_ptr<Drawable>& speaking) {
+std::shared_ptr<Drawable> Character::getDialog(const std::shared_ptr<TextLike>& lines) {
   switch (action) {
   case Action::THINKING:
-    return getThinkingDialog();
-  case Action::SHOUTING:
-    if (!actionAnimated) {
-      speaking = animateShouting(speaking);
+    return makeDialog(getThinkingDialog(), lines);
+  case Action::SHOUTING: {
+    auto dialogWithText = makeDialog(getShoutingDialog(), lines);
+    if (actionAnimated) {
+      return dialogWithText;
+    } else {
+      return animateShouting(dialogWithText);
     }
-    return getShoutingDialog();
-  case Action::MURMURING:
-    if (!actionAnimated) {
-      speaking = animateMurmuring(speaking);
+  }
+  case Action::MURMURING: {
+    auto dialogWithText = makeDialog(getMurmuringDialog(), lines);
+    if (actionAnimated) {
+      return dialogWithText;
+    } else {
+      return animateMurmuring(dialogWithText);
     }
-    return getMurmuringDialog();
+  }
   default:
-    return getNormalDialog();
+    return makeDialog(getNormalDialog(), lines);
   }
 }
 
