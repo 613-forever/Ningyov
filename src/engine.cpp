@@ -10,8 +10,7 @@
 #include <dialog_video_generator/drawable.h>
 #include <common613/vector_arith_utils.h>
 
-namespace dialog_video_generator {
-namespace engine {
+namespace dialog_video_generator { namespace engine {
 
 Strategy::~Strategy() = default;
 
@@ -201,5 +200,4 @@ std::size_t Engine::getBufferCount() const {
   return bufferIndices.empty() ? 1 : bufferIndices.back();
 }
 
-}
-}
+} }
