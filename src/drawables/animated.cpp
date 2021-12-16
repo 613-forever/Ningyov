@@ -12,7 +12,7 @@ Animated::Animated(std::shared_ptr<Drawable> target) : target(std::move(target))
 Animated::~Animated() = default;
 
 Frames Animated::duration() const {
-  return std::min(leastAnimationDuration(), target->duration());
+  return std::max(leastAnimationDuration(), target->duration());
 }
 
 Movement::Movement(std::shared_ptr<Drawable> target, Frames duration)
@@ -70,7 +70,10 @@ CubicEaseInMovement::~CubicEaseInMovement() = default;
 
 Vec2i CubicEaseInMovement::calculateOffset(Frames timeInScene) const {
   auto tmp = timeInScene.x();
-  return linear_interpolate(start, end, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+  auto x = std::round(linear_interpolate(double(end.x()), double(start.x()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
+  auto y = std::round(linear_interpolate(double(end.y()), double(start.y()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
+  return Vec2i::of(x, y);
+//  auto interpolatedExt = linear_interpolate(startExt, endExt, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
 }
 
 CubicEaseOutMovement::CubicEaseOutMovement(std::shared_ptr<Drawable> target,
@@ -85,7 +88,10 @@ CubicEaseOutMovement::~CubicEaseOutMovement() = default;
 
 Vec2i CubicEaseOutMovement::calculateOffset(Frames timeInScene) const {
   auto tmp = dur.x() - timeInScene.x();
-  return linear_interpolate(end, start, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+  auto x = linear_interpolate(double(end.x()), double(start.x()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+  auto y = linear_interpolate(double(end.y()), double(start.y()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+  return Vec2i::of(x, y);
+//  auto interpolatedExt = linear_interpolate(endExt, startExt, tmp * tmp * tmp, dur.x() * dur.x() * dur.x()); // int64 overflow ...
 }
 
 CubicEaseInOutMovement::CubicEaseInOutMovement(std::shared_ptr<Drawable> target,
@@ -102,10 +108,16 @@ Vec2i CubicEaseInOutMovement::calculateOffset(Frames timeInScene) const {
   auto doubleTime = timeInScene * 2;
   if (doubleTime < dur) {
     auto tmp = doubleTime.x();
-    return linear_interpolate(start, end, tmp * tmp * tmp / 2, dur.x() * dur.x());
+    auto x = std::round(linear_interpolate(double(start.x()), double(end.x()), tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x()));
+    auto y = std::round(linear_interpolate(double(start.y()), double(end.y()), tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x()));
+    return Vec2i::of(x, y);
+//    auto interpolatedExt = linear_interpolate(startExt, endExt, tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x());
   } else {
     auto tmp = 2 * dur.x() - doubleTime.x();
-    return linear_interpolate(start, end, (tmp * tmp * tmp) / 2, dur.x() * dur.x());
+    auto x = std::round(linear_interpolate(double(start.x()), double(end.x()), tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x()));
+    auto y = std::round(linear_interpolate(double(start.y()), double(end.y()), tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x()));
+    return Vec2i::of(x, y);
+//    auto interpolatedExt = linear_interpolate(startExt, endExt, (tmp * tmp * tmp) / 2, dur.x() * dur.x() * dur.x());
   }
 }
 
