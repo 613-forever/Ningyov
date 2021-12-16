@@ -41,6 +41,9 @@ using time::Frames;
 inline Frames operator ""_fr(unsigned long long i) {
   return time::frames(i);
 }
+inline Frames operator ""_frames(unsigned long long i) {
+  return time::frames(i);
+}
 inline Frames operator ""_sec(unsigned long long i) {
   return time::seconds(i);
 }

@@ -21,10 +21,10 @@ void init(const std::string& fontDir,
 
   faceForChineseText = openFace(fontDir + fontNameForChinese);
 //  FT_Set_Char_Size(faceForChineseText.get(), 0, 54 * 64, 72, 72);
-  FT_Set_Pixel_Sizes(faceForChineseText.get(), 66, 72);
+  FT_Set_Pixel_Sizes(faceForChineseText.get(), 48, 48);
   faceForJapaneseText = openFace(fontDir + fontNameForJapanese);
 //  FT_Set_Char_Size(faceForJapaneseText.get(), 0, 54 * 64, 72, 72);
-  FT_Set_Pixel_Sizes(faceForJapaneseText.get(), 66, 72);
+  FT_Set_Pixel_Sizes(faceForJapaneseText.get(), 48, 48);
 }
 
 Face openFace(const std::string& filePathname) {

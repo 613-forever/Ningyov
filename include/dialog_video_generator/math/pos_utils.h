@@ -47,8 +47,8 @@ struct Size : private common613::ArrNi<false, UDim, 2> {
   COMMON613_INHERIT_SIZE_FIELD(ArrNi);
 
   template <class IntT, class IntT2>
-  constexpr static Size of(IntT height, IntT2 weight) {
-    return Size{ArrNi::of(height, weight)};
+  constexpr static Size of(IntT height, IntT2 width) {
+    return Size{ArrNi::of(height, width)};
   }
 };
 COMMON613_CHECK_SIZE(Size);

@@ -50,7 +50,8 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
 //      std::printf("---\n");
       CudaMemory cudaMemory = cuda::copyFromCPUMemory(memory);
       if (offsetInTextBox.x() + (slot->metrics.width >> 6) > size.w()) {
-        offsetInTextBox = {0, 96};
+        offsetInTextBox.x() = 0;
+        offsetInTextBox.y() = 64;
       }
       glyphs.emplace_back(Image{RawImage{glyphSize, cudaMemory}, 1, {
         checked_cast<Dim>(pos.x() + offsetInTextBox.x() + slot->bitmap_left),

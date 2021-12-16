@@ -15,8 +15,8 @@ Frames Animated::duration() const {
   return std::min(leastAnimationDuration(), target->duration());
 }
 
-Movement::Movement(std::shared_ptr<Drawable> target, Frames duration) :
-Animated(std::move(target)), dur(duration), frameOffset{} {}
+Movement::Movement(std::shared_ptr<Drawable> target, Frames duration)
+    : Animated(std::move(target)), dur(duration), frameOffset{} {}
 
 Movement::~Movement() = default;
 
@@ -46,4 +46,67 @@ void Movement::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& 
   target->addTask(offset + frameOffset, alpha, tasks);
 }
 
-} }
+SimpleMovement::SimpleMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames dur)
+    : Movement(std::move(target), dur), start(startOffset), end(endOffset) {}
+
+SimpleMovement::SimpleMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames dur)
+    : SimpleMovement(std::move(target), Vec2i{0, 0}, endOffset, dur) {}
+
+SimpleMovement::~SimpleMovement() = default;
+
+Vec2i SimpleMovement::calculateOffset(Frames timeInScene) const {
+  return linear_interpolate(start, end, timeInScene.x(), dur.x());
+}
+
+CubicEaseInMovement::CubicEaseInMovement(std::shared_ptr<Drawable> target,
+                                         Vec2i startOffset, Vec2i endOffset, Frames dur)
+    : Movement(std::move(target), dur),
+      start(startOffset), end(endOffset) {}
+
+CubicEaseInMovement::CubicEaseInMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames dur)
+    : CubicEaseInMovement(std::move(target), Vec2i{0, 0}, endOffset, dur) {}
+
+CubicEaseInMovement::~CubicEaseInMovement() = default;
+
+Vec2i CubicEaseInMovement::calculateOffset(Frames timeInScene) const {
+  auto tmp = timeInScene.x();
+  return linear_interpolate(start, end, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+}
+
+CubicEaseOutMovement::CubicEaseOutMovement(std::shared_ptr<Drawable> target,
+                                           Vec2i startOffset, Vec2i endOffset, Frames dur)
+    : Movement(std::move(target), dur),
+      start(startOffset), end(endOffset) {}
+
+CubicEaseOutMovement::CubicEaseOutMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames dur)
+    : CubicEaseOutMovement(std::move(target), Vec2i{0, 0}, endOffset, dur) {}
+
+CubicEaseOutMovement::~CubicEaseOutMovement() = default;
+
+Vec2i CubicEaseOutMovement::calculateOffset(Frames timeInScene) const {
+  auto tmp = dur.x() - timeInScene.x();
+  return linear_interpolate(end, start, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
+}
+
+CubicEaseInOutMovement::CubicEaseInOutMovement(std::shared_ptr<Drawable> target,
+                                               Vec2i startOffset, Vec2i endOffset, Frames dur)
+    : Movement(std::move(target), dur),
+      start(startOffset), end(endOffset) {}
+
+CubicEaseInOutMovement::CubicEaseInOutMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames dur)
+    : CubicEaseInOutMovement(std::move(target), Vec2i{0, 0}, endOffset, dur) {}
+
+CubicEaseInOutMovement::~CubicEaseInOutMovement() = default;
+
+Vec2i CubicEaseInOutMovement::calculateOffset(Frames timeInScene) const {
+  auto doubleTime = timeInScene * 2;
+  if (doubleTime < dur) {
+    auto tmp = doubleTime.x();
+    return linear_interpolate(start, end, tmp * tmp * tmp / 2, dur.x() * dur.x());
+  } else {
+    auto tmp = 2 * dur.x() - doubleTime.x();
+    return linear_interpolate(start, end, (tmp * tmp * tmp) / 2, dur.x() * dur.x());
+  }
+}
+
+}}

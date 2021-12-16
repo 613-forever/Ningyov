@@ -58,15 +58,13 @@ private:
   std::shared_ptr<drawable::Texture> getShoutingDialog();
   std::shared_ptr<drawable::Texture> getMurmuringDialog();
 
-  std::shared_ptr<drawable::Texture> getCurrentDialog();
-
 public:
   void keepsAllInNextScene();
   void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip);
   void movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset);
-  void speaksInNextScene(const drawable::TextLike& lines, Action newAction = Action::NO_CHANGE);
+  void speaksInNextScene(const drawable::TextLike& lines, Action newAction = Action::NORMAL);
   void speaksAndChangesExprInNextScene(const std::string& pose, const std::string& expression, bool flip,
-                                       const drawable::TextLike& lines, Action newAction = Action::NO_CHANGE);
+                                       const drawable::TextLike& lines, Action newAction = Action::NORMAL);
 
   std::shared_ptr<drawable::Drawable> getStand();
   std::shared_ptr<drawable::Drawable> getDialog(const std::shared_ptr<drawable::TextLike>& speaking);
