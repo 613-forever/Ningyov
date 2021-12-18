@@ -55,7 +55,7 @@ set(${PROJECT_NAME}_HEADERS
         math/time_utils.h # other utils
         text/text_render_utils.h text/text_render_details.h # text rendering support
         image.h # basic images and sprites
-        drawable.h # drawables
+        drawable.h drawables/movements.h # drawables
         engine.h # engine facade
         )
 
@@ -65,7 +65,7 @@ set(${PROJECT_NAME}_SOURCES
         cuda/cuda_utils.cpp cuda/cuda_images.cu
         utils/text_render_utils.cpp
         image.cpp
-        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp
+        drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp drawables/movements.cpp
         engine.cpp
         engine_strategies/frame_strategies.cpp engine_strategies/streaming_strategy.cpp engine_strategies/child_proc_strategy.cpp
         )

@@ -15,10 +15,10 @@ struct Frames : common613::ArrNi<true, std::size_t, 1> {
   constexpr Frames(const Frames& other) = default; // prevent resolution problem when copying
   constexpr Frames(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)
   template <class NumT>
-  static Frames of(NumT num) { return Frames{ArrNi::of(num)}; }
+  constexpr static Frames of(NumT num) { return Frames{ArrNi::of(num)}; }
 };
 
-inline Frames frames(unsigned long long i) {
+constexpr Frames frames(unsigned long long i) {
   return Frames::of(i);
 }
 inline Frames seconds(unsigned long long i) {
@@ -38,10 +38,10 @@ inline Frames minutes(long double i) {
 
 using time::Frames;
 
-inline Frames operator ""_fr(unsigned long long i) {
+constexpr Frames operator ""_fr(unsigned long long i) {
   return time::frames(i);
 }
-inline Frames operator ""_frames(unsigned long long i) {
+constexpr Frames operator ""_frames(unsigned long long i) {
   return time::frames(i);
 }
 inline Frames operator ""_sec(unsigned long long i) {
