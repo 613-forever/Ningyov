@@ -84,6 +84,10 @@ std::shared_ptr<Texture> Character::getMurmuringDialog() {
   return murmuringDialog;
 }
 
+void Character::setOffset(Vec2i newOffset) {
+  offset = newOffset;
+}
+
 void Character::keepsAllInNextScene() {
   nextScene();
   stand->nextScene(false, 0_fr);

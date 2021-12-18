@@ -59,6 +59,8 @@ private:
   std::shared_ptr<drawable::Texture> getMurmuringDialog();
 
 public:
+  void setOffset(Vec2i newOffset);
+
   void keepsAllInNextScene();
   void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip = false);
   void movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset);

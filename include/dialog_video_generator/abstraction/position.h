@@ -29,7 +29,7 @@ enum Position : std::int8_t {
   BORDER_RIGHT = MIDDLE + (4 << POSITION_RESOLUTION_LEFT_SHIFT),
 };
 
-inline Vec2i enumToPosition(Position position) {
+inline Vec2i enumToPosition(std::int8_t position) {
   return Vec2i::of((config::WIDTH * (position - BORDER_LEFT) + (1 << (POSITION_MAX_BIAS_LEFT_SHIFT - 1)))
                        >> POSITION_MAX_BIAS_LEFT_SHIFT, config::HEIGHT * 9 / 8);
 }
@@ -37,6 +37,7 @@ inline Vec2i enumToPosition(Position position) {
 }
 
 using position::Position; // use Pos2i to specify non-semantic positions.
+using position::enumToPosition; // use Pos2i to specify non-semantic positions.
 
 }
 
