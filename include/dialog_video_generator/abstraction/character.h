@@ -32,10 +32,10 @@ public:
     SHOUTING,
     MURMURING,
   };
-  static constexpr const char* const ACTION_NORMAL = "";
-  static constexpr const char* const ACTION_THINKING = "_th";
-  static constexpr const char* const ACTION_SHOUTING = "_sh";
-  static constexpr const char* const ACTION_MURMURING = "_mur";
+  static constexpr const char* const ACT_NORMAL = "";
+  static constexpr const char* const ACT_THINKING = "_th";
+  static constexpr const char* const ACT_SHOUTING = "_sh";
+  static constexpr const char* const ACT_MURMURING = "_mur";
   static constexpr const char* const FIRST_PERSON = "_1st";
 
   explicit Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson = false); // non-display character
@@ -60,11 +60,12 @@ private:
 
 public:
   void keepsAllInNextScene();
-  void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip);
+  void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip = false);
   void movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset);
   void speaksInNextScene(const drawable::TextLike& lines, Action newAction = Action::NORMAL);
-  void speaksAndChangesExprInNextScene(const std::string& pose, const std::string& expression, bool flip,
-                                       const drawable::TextLike& lines, Action newAction = Action::NORMAL);
+  void speaksAndChangesExprInNextScene(const drawable::TextLike& lines,
+                                       const std::string& pose, const std::string& expression, bool flip = false,
+                                       Action newAction = Action::NORMAL);
 
   std::shared_ptr<drawable::Drawable> getStand();
   std::shared_ptr<drawable::Drawable> getDialog(const std::shared_ptr<drawable::TextLike>& speaking);

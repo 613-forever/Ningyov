@@ -58,28 +58,28 @@ void Character::initEyeBinder() {
 
 std::shared_ptr<Texture> Character::getNormalDialog() {
   if (!dialog) {
-    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACTION_NORMAL);
+    dialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACT_NORMAL);
   }
   return dialog;
 }
 
 std::shared_ptr<Texture> Character::getThinkingDialog() {
   if (!thinkingDialog) {
-    thinkingDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACTION_THINKING);
+    thinkingDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACT_THINKING);
   }
   return thinkingDialog;
 }
 
 std::shared_ptr<Texture> Character::getShoutingDialog() {
   if (!shoutingDialog) {
-    shoutingDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACTION_SHOUTING);
+    shoutingDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACT_SHOUTING);
   }
   return shoutingDialog;
 }
 
 std::shared_ptr<Texture> Character::getMurmuringDialog() {
   if (!murmuringDialog) {
-    murmuringDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACTION_MURMURING);
+    murmuringDialog = std::make_shared<Texture>(dlgDir, dlgFmt + (isFirstPerson ? FIRST_PERSON : "") + ACT_MURMURING);
   }
   return murmuringDialog;
 }
@@ -90,7 +90,7 @@ void Character::keepsAllInNextScene() {
   actionAnimated = true;
 }
 
-void Character::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip) {
+void Character::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip/* = false*/) {
   nextScene();
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   stand = std::make_shared<Stand>(
@@ -116,8 +116,10 @@ void Character::speaksInNextScene(const TextLike& lines, Action newAction /*= Ac
   setAction(newAction);
 }
 
-void Character::speaksAndChangesExprInNextScene(const std::string& pose, const std::string& expression, bool flip,
-                                                const TextLike& lines, Action newAction /*= Action::NORMAL*/) {
+void Character::speaksAndChangesExprInNextScene(const TextLike& lines,
+                                                const std::string& pose, const std::string& expression,
+                                                bool flip/* = false*/,
+                                                Action newAction /*= Action::NORMAL*/) {
   nextScene();
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
   stand = std::make_shared<Stand>(
@@ -175,4 +177,5 @@ void Character::nextAct(bool firstPerson /*= false*/) {
   nextScene();
 }
 
-} }
+}
+}
