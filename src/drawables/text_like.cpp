@@ -17,30 +17,35 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
 
   Vec2i offsetInTextBox{0, 0};
   for (char32_t c : buffer) {
-    FT_GlyphSlot slot = font::loadGlyph(font::faceForChineseText, c);
-    assert(slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
-    const Size glyphSize = Size::of(slot->bitmap.rows, slot->bitmap.width);
-    if (glyphSize.total() == 0) {
-      BOOST_LOG_TRIVIAL(debug) << fmt::format("Empty glyph for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
+    if (c == '\n') {
+      offsetInTextBox.x() = 0;
+      offsetInTextBox.y() += 64;
     } else {
-      BOOST_LOG_TRIVIAL(trace) << fmt::format("Generating glyph bitmap for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
-      Memory memory(glyphSize.total());
-      if (slot->bitmap.pitch > 0) {
-        unsigned char* memoryPtr = memory.data(), * bufferPtr = slot->bitmap.buffer;
-        for (int i = 0; i < glyphSize.h(); ++i) {
-          std::memcpy(memoryPtr, bufferPtr, glyphSize.w());
-          memoryPtr += glyphSize.w();
-          bufferPtr += slot->bitmap.pitch;
-        }
+      FT_GlyphSlot slot = font::loadGlyph(font::faceForChineseText, c);
+      assert(slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
+      const Size glyphSize = Size::of(slot->bitmap.rows, slot->bitmap.width);
+      if (glyphSize.total() == 0) {
+        BOOST_LOG_TRIVIAL(debug) << fmt::format("Empty glyph for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
       } else {
-        unsigned char* memoryPtr = memory.data() + (glyphSize.h() - 1) * glyphSize.w(),
-        * bufferPtr = slot->bitmap.buffer;
-        for (int i = 0; i < glyphSize.h(); ++i) {
-          std::memcpy(memoryPtr, bufferPtr, glyphSize.w());
-          memoryPtr -= glyphSize.w();
-          bufferPtr += slot->bitmap.pitch;
+        BOOST_LOG_TRIVIAL(trace)
+          << fmt::format("Generating glyph bitmap for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
+        Memory memory(glyphSize.total());
+        if (slot->bitmap.pitch > 0) {
+          unsigned char* memoryPtr = memory.data(), * bufferPtr = slot->bitmap.buffer;
+          for (int i = 0; i < glyphSize.h(); ++i) {
+            std::memcpy(memoryPtr, bufferPtr, glyphSize.w());
+            memoryPtr += glyphSize.w();
+            bufferPtr += slot->bitmap.pitch;
+          }
+        } else {
+          unsigned char* memoryPtr = memory.data() + (glyphSize.h() - 1) * glyphSize.w(),
+              * bufferPtr = slot->bitmap.buffer;
+          for (int i = 0; i < glyphSize.h(); ++i) {
+            std::memcpy(memoryPtr, bufferPtr, glyphSize.w());
+            memoryPtr -= glyphSize.w();
+            bufferPtr += slot->bitmap.pitch;
+          }
         }
-      }
 //      for (int i = 0; i < glyphSize.h(); ++i) {
 //        for (int j = 0; j < glyphSize.w(); ++j) {
 //          std::printf("%02x ", (int)memory[i * glyphSize.w() + j]);
@@ -48,17 +53,18 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
 //        std::printf("\n");
 //      }
 //      std::printf("---\n");
-      CudaMemory cudaMemory = cuda::copyFromCPUMemory(memory);
-      if (offsetInTextBox.x() + (slot->metrics.width >> 6) > size.w()) {
-        offsetInTextBox.x() = 0;
-        offsetInTextBox.y() = 64;
+        CudaMemory cudaMemory = cuda::copyFromCPUMemory(memory);
+        if (offsetInTextBox.x() + (slot->metrics.width >> 6) > size.w()) {
+          offsetInTextBox.x() = 0;
+          offsetInTextBox.y() += 64;
+        }
+        glyphs.emplace_back(Image{RawImage{glyphSize, cudaMemory}, 1, {
+            checked_cast<Dim>(pos.x() + offsetInTextBox.x() + slot->bitmap_left),
+            checked_cast<Dim>(pos.y() + offsetInTextBox.y() - slot->bitmap_top)
+        }});
       }
-      glyphs.emplace_back(Image{RawImage{glyphSize, cudaMemory}, 1, {
-        checked_cast<Dim>(pos.x() + offsetInTextBox.x() + slot->bitmap_left),
-        checked_cast<Dim>(pos.y() + offsetInTextBox.y() - slot->bitmap_top)
-      }});
+      offsetInTextBox.x() = checked_cast<Dim>((slot->advance.x >> 6) + offsetInTextBox.x());
     }
-    offsetInTextBox.x() = checked_cast<Dim>((slot->advance.x >> 6) + offsetInTextBox.x());
   }
 }
 
