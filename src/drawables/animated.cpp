@@ -20,17 +20,15 @@ Movement::Movement(std::shared_ptr<Drawable> target, Frames duration)
 
 Movement::~Movement() = default;
 
-std::size_t Movement::nextFrame(Frames duration) {
-  std::size_t leastChangedBuffer = target->nextFrame(duration);
-  if (duration > dur) {
+std::size_t Movement::nextFrame(Frames timeInScene) {
+  std::size_t leastChangedBuffer = target->nextFrame(timeInScene);
+  if (timeInScene > dur) {
     return leastChangedBuffer;
   }
-  Vec2i nextFrameOffset = calculateOffset(duration);
-  if (nextFrameOffset == frameOffset) {
-    return leastChangedBuffer;
-  } else {
-    return bufferCount();
-  }
+  Vec2i nextFrameOffset = calculateOffset(timeInScene);
+  auto changedCount = nextFrameOffset == frameOffset ? leastChangedBuffer : bufferCount();
+  frameOffset = nextFrameOffset;
+  return changedCount;
 }
 
 Frames Movement::leastAnimationDuration() const {
@@ -70,8 +68,8 @@ CubicEaseInMovement::~CubicEaseInMovement() = default;
 
 Vec2i CubicEaseInMovement::calculateOffset(Frames timeInScene) const {
   auto tmp = timeInScene.x();
-  auto x = std::round(linear_interpolate(double(end.x()), double(start.x()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
-  auto y = std::round(linear_interpolate(double(end.y()), double(start.y()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
+  auto x = std::round(linear_interpolate(double(start.x()), double(end.x()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
+  auto y = std::round(linear_interpolate(double(start.y()), double(end.y()), tmp * tmp * tmp, dur.x() * dur.x() * dur.x()));
   return Vec2i::of(x, y);
 //  auto interpolatedExt = linear_interpolate(startExt, endExt, tmp * tmp * tmp, dur.x() * dur.x() * dur.x());
 }
