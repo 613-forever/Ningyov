@@ -45,6 +45,8 @@ void CharacterToDraw::addTask(Vec2i offset, unsigned int alpha, std::vector<Draw
 
 void CharacterToDraw::keepsAllInNextScene() {
   Character::keepsAllInNextScene();
+  stand = getStand();
+  dialog = nullptr;
 }
 
 void CharacterToDraw::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip) {
