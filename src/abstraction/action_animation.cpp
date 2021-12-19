@@ -20,7 +20,7 @@ Vec2i Shouting::calculateOffset(Frames duration) const {
   int cur = duration.x() * (dur - duration).x();
   return Vec2i{0, checked_cast<Dim>(
       duration < dur ?
-      cur * config::HEIGHT / -8.0 / halfwayMax :
+      cur * config::HEIGHT / -16.0 / halfwayMax :
       0
   )};
 }
