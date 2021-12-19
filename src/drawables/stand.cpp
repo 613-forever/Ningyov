@@ -17,11 +17,12 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
              unsigned int mul, Frames speaking, bool flip)
     : image{{}, mul, {}}, speaking(speaking), mouthStatus(0), eyeBlinkCountDown(nullptr), eyeStatus(0) {
   std::string posDir = dir + pose + '/', poseUpper(pose.size(), '\0');
-  std::transform(pose.begin(), pose.end(), poseUpper.begin(), [](char c){return std::toupper(c);});
+  std::transform(pose.begin(), pose.end(), poseUpper.begin(), [](char c) { return std::toupper(c); });
   image.raw.load(posDir, poseUpper, true);
   image.pos.x() = -checked_cast<Dim>(image.raw.size.w() * mul / 2);
   image.pos.y() = -checked_cast<Dim>(image.raw.size.h() * mul); // unchecked cast
-  std::uint32_t pos[4];
+  image.flipX = flip;
+  std::int32_t pos[4];
   {
     File file = file::open(posDir + poseUpper + ".POS", "rb");
     file::read(file, pos, 4);
@@ -32,8 +33,9 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   eye[1].raw.load(posDir, expressionPrefix + "_E1", true);
   eye[2].raw.load(posDir, expressionPrefix + "_E2", true);
   eye[3].raw.load(posDir, expressionPrefix + "_E3", true);
-  Vec2i eyeOffset = image.pos + Vec2i::of(flip ? eye[0].raw.size.w() - 1 - pos[0] : pos[0], pos[1]) * mul;
-  for (auto& eyeImage : eye) {
+  Vec2i eyeOffset = image.pos + Vec2i::of(flip ? image.raw.size.w() - eye[0].raw.size.w() - pos[0] : pos[0],
+                                          pos[1]) * mul;
+  for (auto& eyeImage: eye) {
     eyeImage.mul = mul;
     eyeImage.pos = eyeOffset;
     eyeImage.flipX = flip;
@@ -42,8 +44,9 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   mouth[0].raw.load(posDir, expressionPrefix + "_M0", true);
   mouth[1].raw.load(posDir, expressionPrefix + "_M1", true);
   mouth[2].raw.load(posDir, expressionPrefix + "_M2", true);
-  Vec2i mouthOffset = image.pos + Vec2i::of(flip ? mouth[0].raw.size.w() - 1 - pos[2] : pos[2], pos[3]) * mul;
-  for (auto& mouthImage : mouth) {
+  Vec2i mouthOffset = image.pos + Vec2i::of(flip ? image.raw.size.w() - mouth[0].raw.size.w() - pos[2] : pos[2],
+                                            pos[3]) * mul;
+  for (auto& mouthImage: mouth) {
     mouthImage.mul = mul;
     mouthImage.pos = mouthOffset;
     mouthImage.flipX = flip;
@@ -122,7 +125,7 @@ void Stand::bindEyeStatus(Frames* countdown) {
 }
 
 void Stand::refreshEyeBlinkCountDown(Frames* countDown) {
-  std::uniform_int_distribution<typename Frames::valueType> dist((3_sec).x(), (4_sec).x());
+  std::uniform_int_distribution<typename Frames::valueType> dist((2_sec).x(), (5_sec).x());
   countDown->x() = dist(gen);
 }
 
