@@ -23,29 +23,31 @@ extern std::uint16_t STAND_MULTIPLIER;
 
 namespace abstraction {
 
+enum class Action {
+  NO_CHANGE = -1,
+  NORMAL = 0,
+  THINKING,
+  SHOUTING,
+  MURMURING,
+};
+
 class Character {
 public:
-  enum class Action {
-    NO_CHANGE = -1,
-    NORMAL = 0,
-    THINKING,
-    SHOUTING,
-    MURMURING,
-  };
   static constexpr const char* const ACT_NORMAL = "";
   static constexpr const char* const ACT_THINKING = "_th";
   static constexpr const char* const ACT_SHOUTING = "_sh";
   static constexpr const char* const ACT_MURMURING = "_mur";
   static constexpr const char* const FIRST_PERSON = "_1st";
 
-  explicit Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson = false); // non-display character
+  // non-display character
+  Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson = false);
+  // display character. use CharacterToDraw.
   Character(const std::string& dialogDir, const std::string& dialogFormat,
             const std::string& standRootDir, const std::string& poseFormat, const std::string& exprFormat,
-            Vec2i bottomCenterOffset, bool firstPerson = false, bool drawStand = true); // display character
+            Vec2i bottomCenterOffset, bool firstPerson = false, bool drawStand = true);
   ~Character();
 
 private:
-  void nextScene();
   void setAction(Action newAction);
   void clearDialogResources(bool firstPerson);
   void clearDialogResourcesIfChanged(bool firstPerson) {
@@ -64,8 +66,8 @@ public:
   void keepsAllInNextScene();
   void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip = false);
   void movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset);
-  void speaksInNextScene(const drawable::TextLike& lines, Action newAction = Action::NORMAL);
-  void speaksAndChangesExprInNextScene(const drawable::TextLike& lines,
+  void speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lines, Action newAction = Action::NORMAL);
+  void speaksAndChangesExprInNextScene(const  std::shared_ptr<drawable::TextLike>& lines,
                                        const std::string& pose, const std::string& expression, bool flip = false,
                                        Action newAction = Action::NORMAL);
 

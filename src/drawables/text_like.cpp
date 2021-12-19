@@ -99,7 +99,7 @@ void TextLike::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& 
         glyphs[i].raw.size.h(), glyphs[i].raw.size.w(),
         1, alpha,
         true, true, colorType, (alpha < 16),
-        (i >= current), false,
+        (i >= current), false, false, false,
         glyphs[i].raw.memory.get()
     });
   }

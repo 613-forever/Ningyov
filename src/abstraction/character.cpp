@@ -34,8 +34,6 @@ Character::Character(const std::string& dialogDir, const std::string& dialogForm
 
 Character::~Character() = default;
 
-void Character::nextScene() {}
-
 void Character::setAction(Action newAction) {
   if (newAction == Action::NO_CHANGE) {
     actionAnimated = true;
@@ -89,13 +87,11 @@ void Character::setOffset(Vec2i newOffset) {
 }
 
 void Character::keepsAllInNextScene() {
-  nextScene();
   stand->nextScene(false, 0_fr);
   actionAnimated = true;
 }
 
 void Character::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip/* = false*/) {
-  nextScene();
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   stand = std::make_shared<Stand>(
       standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
@@ -106,29 +102,26 @@ void Character::changesExprInNextScene(const std::string& pose, const std::strin
 }
 
 void Character::movesInNextScene(const std::string& pose, const std::string& expression, Vec2i moveTo) {
-  nextScene();
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   // TODO: move animation
 }
 
-void Character::speaksInNextScene(const TextLike& lines, Action newAction /*= Action::NORMAL*/) {
-  nextScene();
+void Character::speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/) {
   if (hasStandToDraw && drawStand) {
     COMMON613_REQUIRE(stand != nullptr, "Setting character speaking before expression.");
-    stand->setSpeakingDuration(lines.duration());
+    stand->setSpeakingDuration(lines->duration());
   }
   setAction(newAction);
 }
 
-void Character::speaksAndChangesExprInNextScene(const TextLike& lines,
+void Character::speaksAndChangesExprInNextScene(const std::shared_ptr<drawable::TextLike>& lines,
                                                 const std::string& pose, const std::string& expression,
                                                 bool flip/* = false*/,
                                                 Action newAction /*= Action::NORMAL*/) {
-  nextScene();
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
   stand = std::make_shared<Stand>(
       standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
-      config::STAND_MULTIPLIER, lines.duration(), flip
+      config::STAND_MULTIPLIER, lines->duration(), flip
   );
   stand->bindEyeStatus(&eyeBinder);
   setAction(newAction);
@@ -138,7 +131,7 @@ std::shared_ptr<Drawable> Character::getStand() {
   if (!drawStand) return nullptr;
   COMMON613_REQUIRE(hasStandToDraw, "Getting stand CG for a character without any stand CG.");
   auto translated = translate(stand, offset);
-  if (!actionAnimated) {
+  if (actionAnimated) {
     return translated;
   }
   switch (action) {
@@ -176,9 +169,9 @@ std::shared_ptr<Drawable> Character::getDialog(const std::shared_ptr<TextLike>& 
   }
 }
 
+// Using new object is preferred.
 void Character::nextAct(bool firstPerson /*= false*/) {
   clearDialogResourcesIfChanged(firstPerson);
-  nextScene();
 }
 
 }

@@ -22,19 +22,26 @@ public:
 
 class Static : public Drawable {
 public:
-  friend class Drawable;
-  explicit Static(Image sprite);
   ~Static() override;
   Frames duration() const final { return 0_fr; }
   std::size_t bufferCount() const final { return 1; }
   std::size_t nextFrame(Frames timeInScene) final { return 0; }
   void nextScene(bool stop, Frames point) final {}
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
+};
+
+class StaticImage : public Static {
+public:
+  friend class Drawable;
+  explicit StaticImage(Image sprite);
+  ~StaticImage() override;
+  Size staticSize() const;
+  void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 protected:
   Image image;
 };
 
-class EntireImage : public Static {
+class EntireImage : public StaticImage {
 public:
   EntireImage(const std::string& dir, const std::string& name, unsigned int mul = 1, Vec2i offset = {0, 0});
   explicit EntireImage(Image sprite);
@@ -42,12 +49,22 @@ public:
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 };
 
-class Texture : public Static {
+class Texture : public StaticImage {
 public:
   Texture(const std::string& dir, const std::string& name, unsigned int mul = 1, Vec2i offset = {0, 0});
   explicit Texture(Image sprite);
   ~Texture() override;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+};
+
+class ColorRect : public Static {
+public:
+  explicit ColorRect(Color4b color);
+  ColorRect(Color4b color, Vec2i offset, Size rect);
+  ~ColorRect() override;
+  void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+private:
+  ColorImage colorImage;
 };
 
 class UpdatedByFrame : public Drawable {
@@ -154,6 +171,20 @@ public:
 protected:
   Frames dur;
   Vec2i frameOffset;
+};
+
+class AlphaChange : public Animated {
+public:
+  AlphaChange(std::shared_ptr<Drawable> target, Frames duration);
+  ~AlphaChange() override;
+  Frames leastAnimationDuration() const final;
+  std::size_t nextFrame(Frames timeInScene) override;
+  void nextScene(bool stop, Frames point) override;
+  virtual int calculateAlpha(Frames timeInScene) const = 0;
+  void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const final;
+protected:
+  Frames dur;
+  int frameAlpha;
 };
 
 }

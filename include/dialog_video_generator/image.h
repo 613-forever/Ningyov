@@ -64,10 +64,19 @@ struct Image {
   void addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool flip, std::vector<DrawTask>& tasks) const;
 };
 
+struct ColorImage {
+  Size size{Size::of(0, 0)};
+  CudaMemory color{};
+  Vec2i pos{Vec2i::of(0, 0)};
+
+  void addTask(Vec2i offset, unsigned int extraAlpha, std::vector<DrawTask>& tasks) const;
+};
+
 }
 
 using image::RawImage;
 using image::Image;
+using image::ColorImage;
 
 }
 

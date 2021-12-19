@@ -53,7 +53,7 @@ struct DrawTask {
   unsigned int mul;
   unsigned int alpha;
   bool useAlphaChannel, useAsAlphaOnly, useAsAlphaAndUseColorText, useExtraAlpha;
-  bool skip, flip;
+  bool skip, flip, useOnlyOneColor, isLinearFilter;
   const unsigned char* image;
 };
 

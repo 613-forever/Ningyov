@@ -32,7 +32,7 @@ struct Range {
 
   COMMON613_INJECT_SIZE_FIELD(2 * Pos2i::COMMON613_INJECTED_SIZE);
 };
-COMMON613_CHECK_SIZE(Range);
+COMMON613_CHECK_BINARY_USABLE(Range);
 
 struct Size : private common613::ArrNi<false, UDim, 2> {
   constexpr Size(const Size& arr) = default; // prevent resolution problem when copying
@@ -51,7 +51,7 @@ struct Size : private common613::ArrNi<false, UDim, 2> {
     return Size{ArrNi::of(height, width)};
   }
 };
-COMMON613_CHECK_SIZE(Size);
+COMMON613_CHECK_BINARY_USABLE(Size);
 
 struct Color4b : private common613::ArrNi<true, Byte, 4> {
   constexpr Color4b(const Color4b& arr) = default; // prevent resolution problem when copying
@@ -74,7 +74,7 @@ struct Color4b : private common613::ArrNi<true, Byte, 4> {
     return Color4b{ArrNi::of(r, g, b, a)};
   }
 };
-COMMON613_CHECK_SIZE(Color4b);
+COMMON613_CHECK_BINARY_USABLE(Color4b);
 
 }
 

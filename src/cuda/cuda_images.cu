@@ -36,6 +36,7 @@ __device__ void renderPixel(unsigned char* dst, const unsigned char* bg, const D
         dst[index * 4 + 2] = (255 - alpha) * bg[index * 4 + 2] / 255;
       }
     } else {
+      textureIndex *= !task->useOnlyOneColor;
       if (task->useAlphaChannel) {
         if (task->useExtraAlpha) {
           std::uint16_t alpha = task->image[textureIndex * 4 + 3] * task->alpha / 16;

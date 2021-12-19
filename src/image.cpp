@@ -90,8 +90,21 @@ void Image::addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool 
       mul,
       extraAlpha,
       withAlpha, false, false, extraAlpha < 16,
-      false, (this->flipX != flip),
+      false, (this->flipX != flip), false, false,
       raw.memory.get(),
+  });
+}
+
+void ColorImage::addTask(Vec2i offset, unsigned int extraAlpha,
+                         std::vector<DrawTask>& tasks) const {
+  tasks.emplace_back(DrawTask{
+    pos.y() + offset.y(), pos.x() + offset.x(),
+    size.h(), size.w(),
+    1,
+    extraAlpha,
+    false, false, false, extraAlpha < 16,
+    false, false, true, false,
+    color.get()
   });
 }
 

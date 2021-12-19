@@ -44,4 +44,33 @@ void Movement::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& 
   target->addTask(offset + frameOffset, alpha, tasks);
 }
 
+AlphaChange::AlphaChange(std::shared_ptr<Drawable> target, Frames duration)
+    : Animated(std::move(target)), dur(duration), frameAlpha{} {}
+
+AlphaChange::~AlphaChange() = default;
+
+std::size_t AlphaChange::nextFrame(Frames timeInScene) {
+  std::size_t leastChangedBuffer = target->nextFrame(timeInScene);
+  if (timeInScene > dur) {
+    return leastChangedBuffer;
+  }
+  int nextFrameAlpha = calculateAlpha(timeInScene);
+  auto changedCount = nextFrameAlpha == frameAlpha ? leastChangedBuffer : bufferCount();
+  frameAlpha = nextFrameAlpha;
+  return changedCount;
+}
+
+Frames AlphaChange::leastAnimationDuration() const {
+  return dur;
+}
+
+void AlphaChange::nextScene(bool stop, Frames duration) {
+  // TODO: take off the wrapper?
+  target->nextScene(stop, duration);
+}
+
+void AlphaChange::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {
+  target->addTask(offset, alpha * frameAlpha / 16, tasks);
+}
+
 } }
