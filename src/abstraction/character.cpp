@@ -3,7 +3,7 @@
 
 #include <dialog_video_generator/abstraction/character.h>
 
-#include <dialog_video_generator/abstraction/action_animation.h>
+#include <dialog_video_generator/abstraction/action_animations.h>
 #include <dialog_video_generator/abstraction/dialog.h>
 
 using namespace dialog_video_generator::drawable;

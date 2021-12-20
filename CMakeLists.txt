@@ -74,13 +74,13 @@ set(${PROJECT_NAME}_SOURCES
 set(${PROJECT_NAME}_FACADE_HEADERS
         abstraction/character.h abstraction/character_to_draw.h # multiscene
         abstraction/position.h # abstract position
-        abstraction/action_animation.h abstraction/dialog.h
+        abstraction/action_animations.h abstraction/dialog.h
 #        abstraction/director.h # director facade
         )
 
 set(${PROJECT_NAME}_FACADE_SOURCES
         abstraction/character.cpp abstraction/character_to_draw.cpp
-        abstraction/action_animation.cpp abstraction/dialog.cpp
+        abstraction/action_animations.cpp abstraction/dialog.cpp
 #        abstraction/director.cpp
         )
 

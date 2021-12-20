@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#include <dialog_video_generator/abstraction/action_animation.h>
+#include <dialog_video_generator/abstraction/action_animations.h>
 
 #include <dialog_video_generator/math/pos_arith.h>
 

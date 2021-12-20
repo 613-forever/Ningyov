@@ -2,8 +2,8 @@
 // Copyright (c) 2021 613_forever
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_ACTION_ANIMATION_H
-#define DIALOGVIDEOGENERATOR_ACTION_ANIMATION_H
+#ifndef DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
+#define DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
 
 #include <dialog_video_generator/drawable.h>
 
@@ -31,10 +31,10 @@ private:
   constexpr static const long double LENGTH_SECOND = 2;
 };
 
-inline std::shared_ptr<Shouting> animateMurmuring(std::shared_ptr<Drawable> target) {
-  return std::make_shared<Shouting>(std::move(target));
+inline std::shared_ptr<Murmuring> animateMurmuring(std::shared_ptr<Drawable> target) {
+  return std::make_shared<Murmuring>(std::move(target));
 }
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_ACTION_ANIMATION_H
+#endif //DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
