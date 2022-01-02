@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file common.h
+/// @brief Utils about @ref Pos2i and @ref Vec2i.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_COMMON_H
@@ -17,11 +20,15 @@ using namespace std::literals;
 using common613::checked_cast;
 
 namespace config {
+/// @brief Video parameter.
 extern std::uint16_t FRAMES_PER_SECOND;
+/// @brief Video parameter.
 extern std::uint16_t WIDTH, HEIGHT;
+/// @brief Hardware parameter. Limits usage if necessary.
 extern std::uint16_t GPU_MAX_THREAD_PER_BLOCK, CPU_THREADS_NUM;
 };
 
+/// @brief Global initialization. Loads configures, setting up logging, and so on.
 void init();
 
 }

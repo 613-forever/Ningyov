@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file pos_arith.h
+/// @brief Arithmetic operations about @ref Pos2i and @ref Vec2i.
+/// @note Use @ref pos_utils.h instead if possible.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_POS_ARITH_H

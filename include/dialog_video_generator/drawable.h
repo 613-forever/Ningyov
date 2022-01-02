@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file drawable.h
+/// @brief Utils about @ref Drawable.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_DRAWABLE_H
@@ -10,50 +13,121 @@
 
 namespace dialog_video_generator { namespace drawable {
 
+/**
+ * @brief Base class for all drawable elements.
+ *
+ * Every drawable is a logical set of layers to paint onto a buffer.
+ *
+ * We only repaint drawables that are changed themselves, or are after a changed layer.
+ * So @c bufferCount provides the number of layers, and @c nextFrame provides how many layers should be repainted.
+ */
 class Drawable {
 public:
   virtual ~Drawable() = default;
+
+  /// @brief Get naturally minimal duration of the layer.
   virtual Frames duration() const = 0;
+
+  /// @brief Gets the number of buffers needed to draw.
+  /// @note It is also the number of layers.
   virtual std::size_t bufferCount() const = 0;
+
+  /// @brief Calculates the status in the next frame, changes into it, and returns the number of layers to redraw.
   virtual std::size_t nextFrame(Frames timeInScene) = 0;
+
+  /// @brief Stops the drawable and move it into another scene.
+  /// @param stop Whether any animation should be stop if any.
+  /// @param point The time point to continue in the next scene, if any animation is playing and not stopped.
   virtual void nextScene(bool stop, Frames point) = 0;
+
+  /// @brief Generates tasks to draw itself.
+  /// @param offset The extra vector offset in the tasks.
+  /// @param alpha The extra alpha in the tasks (0-16).
+  /// @param[in,out] tasks Where generated tasks is appended.
   virtual void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const = 0;
 };
 
+/**
+ * @brief Base class for all static, single-layer drawable elements.
+ *
+ * Static drawables are elements which need no repainting if not affected.
+ */
 class Static : public Drawable {
 public:
   ~Static() override;
+
+  /// @inheritdoc
+  /// Static drawables need no frames to animate.
   Frames duration() const final { return 0_fr; }
+
+  /// @inheritdoc
+  /// Static drawables need only one layer.
   std::size_t bufferCount() const final { return 1; }
+
+  /// @inheritdoc
+  /// Static drawables are always static.
   std::size_t nextFrame(Frames timeInScene) final { return 0; }
+
+  /// @inheritdoc
+  /// Static drawables are always static.
   void nextScene(bool stop, Frames point) final {}
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 };
 
 class StaticImage : public Static {
 public:
   friend class Drawable;
+
+  /// @brief Import a image as the layer.
   explicit StaticImage(Image sprite);
+
   ~StaticImage() override;
+
   Size staticSize() const;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 protected:
   Image image;
 };
 
+/**
+ * @brief A non-transparent image.
+ *
+ * @note Alpha channels in the images loaded this way will be ignored.
+ *
+ * In earliest code, @c addTask does not have a external alpha channel.
+ */
 class EntireImage : public StaticImage {
 public:
+  /// @brief Loads a image from pathname @p dir and @p name (".png" will be appended)
+  /// and specified multiplier @p mul and offset @p offset.
   EntireImage(const std::string& dir, const std::string& name, unsigned int mul = 1, Vec2i offset = {0, 0});
+
+  /// @inheritdoc
   explicit EntireImage(Image sprite);
+
   ~EntireImage() override;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 };
 
+/**
+ * @brief A normal image texture.
+ *
+ * Render alpha channel.
+ */
 class Texture : public StaticImage {
 public:
+  /// @brief Loads a image from pathname @p dir and @p name (".png" will be appended)
+  /// and specified multiplier @p mul and offset @p offset.
   Texture(const std::string& dir, const std::string& name, unsigned int mul = 1, Vec2i offset = {0, 0});
+
+  /// @inheritdoc
   explicit Texture(Image sprite);
+
   ~Texture() override;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 };
 
@@ -67,6 +141,11 @@ private:
   ColorImage colorImage;
 };
 
+/**
+ * @brief Base class for frame-wise updating frames.
+ *
+ * Frame updating drawables are elements which need refreshing under a predictable procedure.
+ */
 class UpdatedByFrame : public Drawable {
 public:
   Frames duration() const override = 0;
@@ -75,14 +154,31 @@ public:
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 };
 
+/**
+ * @brief Text boxes.
+ *
+ * Texts will be shown in order in a constant speed.
+ * Note that the speed will be approximated as numbers of new characters for every frame.
+ */
 class TextLike : public UpdatedByFrame {
 public:
+  /**
+   * @brief Loads a string @p content, print it at @p pos, with width of @p sz.
+   * @param colorType Whether it should be rendered in thinking color.
+   * @param start The index of the character, before which characters are displayed before the first frame.
+   * @param speedNum,speedDen In every new frame, @p speedNum / @p speedDen characters appears.
+   */
   TextLike(const std::string& content, Vec2i pos, Size sz, bool colorType = false,
            std::size_t start = 0, std::size_t speedNum = 1, std::size_t speedDen = 2);
+
   ~TextLike() override;
+
   Frames duration() const override;
   std::size_t bufferCount() const override;
   std::size_t nextFrame(Frames timeInScene) override;
+  /// @inheritdoc
+  ///
+  /// Texts will keep the current status when crossing scenes, but it not recommended.
   void nextScene(bool stop, Frames point) final {}
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 private:
@@ -93,19 +189,47 @@ private:
   bool colorType; // 0 = speaking, black; 1 = thinking, blue
 };
 
+/**
+ * @brief Stand CG, or \i Tachie ().
+ *
+ * Provides functions for blinking and speaking stand CG update.
+ * An eye status variable should be provided externally to bind here.
+ *
+ * @note The origin of a @p Stand is at the bottom-center position.
+ */
 class Stand : public UpdatedByFrame {
 public:
+  /**
+   * @brief Loads stand CG resources from @p dir, @p pose and @p expression.
+   *
+   * @param dir Resource root dir.
+   * @param pose Pose name.
+   * @param expression Expression name.
+   * @param mul Size multiplier.
+   * @param speaking Duration the character is sleeping.
+   * @param flip Whether the CG should be flipped in X direction.
+   *
+   * @warning There is no user-defined path name pattern specification for the time being.
+   * Maybe more flexible method will be added.
+   */
   Stand(const std::string& dir, const std::string& pose, const std::string& expression,
         unsigned int mul, Frames speaking = 0_fr, bool flip = false);
+
   ~Stand() override;
   Frames duration() const override;
   std::size_t bufferCount() const override;
   std::size_t nextFrame(Frames timeInScene) override;
   void nextScene(bool stop, Frames point) override;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+
+  /// @brief Sets the stand will speak for @p frames.
   void setSpeakingDuration(Frames duration);
+
+  /// @brief Binds it to an external @p countDown variable.
   void bindEyeStatus(Frames* countDown);
+
   static void refreshEyeBlinkCountDown(Frames* countDown);
+
 private:
   Image image;
   Image eye[4];
@@ -117,8 +241,13 @@ private:
   std::size_t mouthStatus; // mouth status
 };
 
+/**
+ * @brief A wrapper to translate a drawable.
+ * @sa translate
+ */
 class Translated : public Drawable {
 public:
+  /// @brief Wraps @p target, and translate it by @p offset.
   Translated(std::shared_ptr<Drawable> target, Vec2i offset);
   ~Translated() override;
   Frames duration() const override {
@@ -139,10 +268,19 @@ private:
   Vec2i translatedOffset;
 };
 
+/**
+ * @brief A convenient function to construct @ref Translated by @ref Translated#Translated(target, offset)
+ * @related Translate
+ */
 inline std::shared_ptr<Translated> translate(std::shared_ptr<Drawable> target, Vec2i offset) {
   return std::make_shared<Translated>(std::move(target), offset);
 }
 
+/**
+ * @brief Base class for animated drawables.
+ *
+ * Note that no derivations has been implemented for the time being.
+ */
 class Animated : public Drawable {
 public:
   explicit Animated(std::shared_ptr<Drawable> target);

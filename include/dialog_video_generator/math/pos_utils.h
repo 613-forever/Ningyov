@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file pos_utils.h
+/// @brief Utils about @ref Pos2i and @ref Vec2i.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_POS_UTILS_H
@@ -13,11 +16,18 @@ using Byte = std::uint8_t;
 using Dim = std::int16_t;
 using UDim = std::uint16_t;
 
+/// @brief 2D positions of integers.
+/// @note Always mark positions using @ref Positions to avoid logic bugs.
 using Pos2i = common613::Arr2i<false, Dim>;
 COMMON613_CHECK_SIZE(Pos2i);
+/// @brief 2D vectors of integers.
+/// @note Always mark positions using @ref Positions to avoid logic bugs.
 using Vec2i = common613::Arr2i<true, Dim>;
 COMMON613_CHECK_SIZE(Vec2i);
 
+/// @brief 2D ranges.
+/// Used to describe rectangles.
+/// @note Unused now. May be used to optimize rectangle repaint in the future.
 struct Range {
   Pos2i leftTop, rightBottom;
 
@@ -34,6 +44,8 @@ struct Range {
 };
 COMMON613_CHECK_BINARY_USABLE(Range);
 
+/// @brief 2D sizes.
+/// Used to describe size of rectangles.
 struct Size : private common613::ArrNi<false, UDim, 2> {
   constexpr Size(const Size& arr) = default; // prevent resolution problem when copying
   constexpr Size(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)
@@ -53,6 +65,9 @@ struct Size : private common613::ArrNi<false, UDim, 2> {
 };
 COMMON613_CHECK_BINARY_USABLE(Size);
 
+/// @brief RGBA structs.
+/// Used to describe colors.
+/// @note Unused now because there are no explicit color specification API now. Reserved for future use.
 struct Color4b : private common613::ArrNi<true, Byte, 4> {
   constexpr Color4b(const Color4b& arr) = default; // prevent resolution problem when copying
   constexpr Color4b(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/drawable.h>
 
@@ -71,17 +71,17 @@ std::size_t Stand::nextFrame(Frames timeInScene) {
       switch (mouthStatus) {
       case 0: {
         std::bernoulli_distribution dist(0.8);
-        mouthStatus = dist(gen) ? 2 : 1;
+        mouthStatus = dist(random::gen) ? 2 : 1;
       }
         break;
       case 1: {
         std::bernoulli_distribution dist(0.8);
-        mouthStatus = dist(gen) ? 2 : 0;
+        mouthStatus = dist(random::gen) ? 2 : 0;
       }
         break;
       case 2: {
         std::bernoulli_distribution dist(0.8);
-        mouthStatus = dist(gen) ? 1 : 0;
+        mouthStatus = dist(random::gen) ? 1 : 0;
       }
         break;
       }

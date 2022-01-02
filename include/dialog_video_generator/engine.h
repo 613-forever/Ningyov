@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file engine.h
+/// @brief Rendering engine for a single act.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_ENGINE_H
@@ -37,11 +40,15 @@ namespace engine {
 
 class Engine;
 
+/// @brief Frame handling strategies.
 class Strategy {
 public:
   virtual ~Strategy() = 0;
+  /// @brief Initializes the strategy.
   virtual void init(const Engine*) {}
+  /// @brief Handles a frame.
   virtual void handleFrame(const Engine* engine, size_t index) {}
+  /// @brief Cleans up the strategy.
   virtual void cleanup(const Engine*) {}
 };
 

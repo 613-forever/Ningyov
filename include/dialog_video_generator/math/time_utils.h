@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file time_utils.h
+/// @brief Utils about time point and durations by the frame.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_TIME_UTILS_H
@@ -11,6 +14,7 @@
 
 namespace dialog_video_generator { namespace time {
 
+/// @brief Wrapper for frame count as time unit, to avoid logic bugs.
 struct Frames : common613::ArrNi<true, std::size_t, 1> {
   constexpr Frames(const Frames& other) = default; // prevent resolution problem when copying
   constexpr Frames(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)

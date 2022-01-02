@@ -9,6 +9,7 @@
 
 namespace dialog_video_generator {
 
+/// @brief Global random generator.
 extern std::mt19937_64 gen;
 
 }

@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
+
+/// @file text_render_details.h
+/// @brief Wrapper for the library @c FreeType.
+/// @note Use @ref text_render_utils.h if possible, to isolate @c FreeType from other codes.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_TEXT_RENDER_DETAILS_H
@@ -18,6 +22,7 @@ struct LibraryCloser {
     FT_Done_FreeType(lib);
   }
 };
+/// @brief Auto releasing @c FT_Library.
 using Library = std::unique_ptr<std::remove_pointer_t<FT_Library>, LibraryCloser>;
 extern Library library;
 
@@ -27,19 +32,23 @@ struct GlyphCloser {
     FT_Done_Glyph(glyph);
   }
 };
+/// @brief Auto releasing @c FT_Glyph. Now unused. Maybe used when multiple fonts are involved.
 using Glyph = std::unique_ptr<std::remove_pointer_t<FT_Glyph>, GlyphCloser>;
 
 struct FaceCloser {
   void operator()(FT_Face face) {
-//    BOOST_LOG_TRIVIAL(trace) << "Releasing a typeface @" << (void*)face;
+//    BOOST_LOG_TRIVIAL(trace) << "Releasing a typeface @" << (void*)face; // Global variable release.
     FT_Done_Face(face);
   }
 };
+/// @brief Auto releasing @c FT_Face.
 using Face = std::unique_ptr<std::remove_pointer_t<FT_Face>, FaceCloser>;
+/// @brief Opens a font face with specified @p filePathname.
 Face openFace(const std::string& filePathname);
 extern Face faceForChineseText;
 extern Face faceForJapaneseText;
 
+/// @brief Accesses @c FT_GlyphSlot directly.
 FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint);
 
 } }
