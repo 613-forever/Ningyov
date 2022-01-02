@@ -126,7 +126,7 @@ void Stand::bindEyeStatus(Frames* countdown) {
 
 void Stand::refreshEyeBlinkCountDown(Frames* countDown) {
   std::uniform_int_distribution<typename Frames::valueType> dist((2_sec).x(), (5_sec).x());
-  countDown->x() = dist(gen);
+  countDown->x() = dist(random::gen);
 }
 
 } }

@@ -118,7 +118,7 @@ add_library(${PROJECT_NAME}_FACADE STATIC
         ${${PROJECT_NAME}_FACADE_HEADERS_RELATIVE} ${${PROJECT_NAME}_FACADE_SOURCES_RELATIVE})
 target_include_directories(
         ${PROJECT_NAME}_FACADE PUBLIC
-        $<BUILD_INTERFACE:"${DialogVideoGenerator_SOURCE_DIR};${DialogVideoGenerator_SOURCE_DIR}/include">
+        $<BUILD_INTERFACE:${DialogVideoGenerator_SOURCE_DIR};${DialogVideoGenerator_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_include_directories(${PROJECT_NAME}_FACADE PUBLIC

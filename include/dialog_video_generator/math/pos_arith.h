@@ -32,7 +32,7 @@ constexpr common613::ArrNi<A, IntT, N> linear_interpolate(
 }
 
 COMMON613_NODISCARD
-constexpr Range makeRange(Vec2i lt, Size sz) {
+constexpr Range makeRange(const Vec2i lt, const Size sz) { // use const to ensure constexpr overload
   return Range{
       Pos2i::of(lt.x(), lt.y()),
       Pos2i::of(lt.x() + sz.w(), lt.y() + sz.h())
