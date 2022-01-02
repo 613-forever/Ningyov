@@ -56,6 +56,7 @@ set(${PROJECT_NAME}_HEADERS
         text/text_render_utils.h text/text_render_details.h # text rendering support
         image.h # basic images and sprites
         drawable.h drawables/movements.h drawables/alpha_changes.h # drawables
+        drawables/filters.h
         engine.h # engine facade
         )
 
@@ -67,6 +68,7 @@ set(${PROJECT_NAME}_SOURCES
         image.cpp
         drawables/drawable.cpp drawables/stand.cpp drawables/text_like.cpp drawables/animated.cpp
         drawables/movements.cpp drawables/alpha_changes.cpp
+        drawables/filters.cpp
         engine.cpp
         engine_strategies/frame_strategies.cpp engine_strategies/streaming_strategy.cpp engine_strategies/child_proc_strategy.cpp
         )
@@ -75,12 +77,14 @@ set(${PROJECT_NAME}_FACADE_HEADERS
         abstraction/character.h abstraction/character_to_draw.h # multiscene
         abstraction/position.h # abstract position
         abstraction/action_animations.h abstraction/dialog.h
+        abstraction/common_filters.h
 #        abstraction/director.h # director facade
         )
 
 set(${PROJECT_NAME}_FACADE_SOURCES
         abstraction/character.cpp abstraction/character_to_draw.cpp
         abstraction/action_animations.cpp abstraction/dialog.cpp
+        abstraction/common_filters.cpp
 #        abstraction/director.cpp
         )
 
