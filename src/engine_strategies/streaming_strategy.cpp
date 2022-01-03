@@ -4,6 +4,7 @@
 #include <dialog_video_generator/engine.h>
 
 #include <dialog_video_generator/image.h>
+#include <iostream>
 
 namespace dialog_video_generator { namespace engine {
 

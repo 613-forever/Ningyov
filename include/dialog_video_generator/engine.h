@@ -32,7 +32,7 @@ using image::RawImage;
 
 struct DrawTask;
 
-namespace director {
+namespace abstraction {
 class Director;
 }
 
@@ -40,7 +40,9 @@ namespace engine {
 
 class Engine;
 
-/// @brief Frame handling strategies.
+/**
+ * @brief Interface for frame handling strategies.
+ */
 class Strategy {
 public:
   virtual ~Strategy() = 0;
@@ -52,18 +54,40 @@ public:
   virtual void cleanup(const Engine*) {}
 };
 
+/**
+ * @class Engine
+ * @brief Rendering engine.
+ *
+ * Before using the engine, register a series of strategies into it.
+ *
+ * We can push layers into it.
+ * The engine will render the layers into a sequence of frames, called a scene.
+ * (In fact, it should not be called a scene, but I don't know how to name it better.)
+ * For every frame, the strategies are called, which can be used to save or output the frames.
+ *
+ * Clear the states, reset the scene, and another scene can be re-rendered with the layers.
+ * Of course, layers can be changed, modified or just left untouched, and then reused to make another sequence.
+ */
 class Engine {
 public:
   using Strategies = std::vector<std::unique_ptr<Strategy>>;
-  friend class ::dialog_video_generator::director::Director;
+  friend class ::dialog_video_generator::abstraction::Director;
 
+  /**
+   * @brief Constructs the engine.
+   * @param strategies The strategies registered in the engine.
+   * @param start The frame number to start with. [Now unused, many layers may need changing if it is used.]
+   */
   explicit Engine(Strategies&& strategies, Frames start = 0_fr);
   ~Engine();
 
+  /// @brief Returns a reference to the underlying layers.
   std::vector<std::shared_ptr<Drawable>>& getLayers() { return layers; }
 
+  /// @brief Clears states to prepare for another scene.
   void nextScene(bool stop = true);
 
+  /// @brief Renders the scene, i.e., generates frames and calls strategies.
   void renderScene() const;
 
 private:
@@ -73,10 +97,17 @@ private:
   void renderTasks(size_t startBuffer, size_t bg, const std::vector<DrawTask>& tasks, size_t skippedTaskNumber) const;
 
 public:
+  /// @brief Set a scene to be at a length of @p fr.
   void setWaitLength(Frames fr);
+  /// @brief Set a scene to wait after all animation layers finishes, at a length of @p fr.
   void setTotalLength(Frames fr);
+
+  /// @brief Returns the length when at least one animation layer is active.
   Frames getActiveLength() const;
+  /// @brief Returns the total length of the scene.
   Frames getTotalLength() const;
+
+  /// @brief Returns the count of the buffers prepared for the layers.
   std::size_t getBufferCount() const;
 
 private:
@@ -97,6 +128,7 @@ private:
   mutable std::atomic_int counter;
 
 public:
+  /// @brief Strategy saving the frame.
   class SaveFrameByFrame : public Strategy {
   public:
     SaveFrameByFrame(std::string targetDir, std::string format);
@@ -105,6 +137,7 @@ public:
   private:
     std::string targetDir, format;
   };
+  /// @brief Strategy saving all buffers of the frame.
   class SaveIntermediateResults : public Strategy {
   public:
     SaveIntermediateResults(std::string cacheDir, std::string format);
@@ -114,6 +147,7 @@ public:
     std::string targetDir, format;
   };
 #ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_STRATEGY
+  /// @brief Strategy saving the frame using FFMpeg.
   class SaveVideo: public Strategy {
   public:
     SaveVideo(std::string cacheDir, std::string name);
@@ -129,6 +163,7 @@ public:
   };
 #endif
 #ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_GPU_STRATEGY
+  /// @brief Strategy saving the frame using VideoCodec.
   class SaveVideoGPU : public Strategy {
   public:
     SaveVideoGPU(std::string cacheDir, std::string name);
@@ -143,6 +178,7 @@ public:
     std::string targetDir, name;
   };
 #endif
+  /// @brief Strategy streaming the frame into stdout.
   class StdoutStreaming : public Strategy {
   public:
     StdoutStreaming();
@@ -151,6 +187,7 @@ public:
     void cleanup(const Engine* engine) override;
   };
 #ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+  /// @brief Strategy starting a FFMpeg subprocess when initialized, and piping the frame into it.
   class ChildProcVideo : public Strategy {
   public:
     ChildProcVideo(std::string cacheDir, std::string name);

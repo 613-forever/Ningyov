@@ -37,7 +37,7 @@ inline CudaMemory allocateMemory3(unsigned int h, unsigned int w) {
   return allocateMemory(h * w * 3);
 }
 
-/// @brief Allocate GPU memory of @p size bytes and copy contents from CPU memory pointed by @p.
+/// @brief Allocate GPU memory of @p size bytes and copy contents from CPU memory pointed by @p p.
 CudaMemory copyFromCPUMemory(const void* p, unsigned int size);
 
 /// @overload

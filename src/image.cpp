@@ -7,6 +7,8 @@
 #include <thread>
 #include <cuda_runtime.h>
 #include <common613/compat/file_system.h>
+#include <png.hpp>
+#include <solid_pixel_buffer.hpp>
 
 namespace dialog_video_generator { namespace image {
 

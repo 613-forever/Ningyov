@@ -129,3 +129,4 @@ target_include_directories(${PROJECT_NAME}_FACADE PUBLIC
 target_link_libraries(${PROJECT_NAME}_FACADE PUBLIC ${PROJECT_NAME})
 
 add_subdirectory("test")
+add_subdirectory("doc")

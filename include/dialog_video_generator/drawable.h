@@ -2,7 +2,7 @@
 // Copyright (c) 2021-2022 613_forever
 
 /// @file drawable.h
-/// @brief Utils about @ref Drawable.
+/// @brief Types about @ref Drawable.
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_DRAWABLE_H
@@ -190,7 +190,7 @@ private:
 };
 
 /**
- * @brief Stand CG, or \i Tachie ().
+ * @brief Stand CG, or @e Tachie (<span lang="ja">立ち絵</span>).
  *
  * Provides functions for blinking and speaking stand CG update.
  * An eye status variable should be provided externally to bind here.

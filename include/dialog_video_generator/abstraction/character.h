@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
+/// @file
+/// @brief Abstraction for characters.
+
 #ifndef DIALOGVIDEOGENERATOR_CHARACTER_H
 #define DIALOGVIDEOGENERATOR_CHARACTER_H
 
