@@ -15,12 +15,15 @@
 
 namespace dialog_video_generator {
 
+/// @brief Linear interpolation.
 template <class Val, class IntT>
 COMMON613_NODISCARD
 constexpr Val linear_interpolate(const Val& start, const Val& end, IntT current, IntT total) {
   return (end * current + start * (total - current)) / total;
 }
 
+/// @brief Linear interpolation for vectors.
+/// @note Unused because integer arithmetics are not enough for complex interpolation.
 template <bool A, class IntT, std::size_t N>
 COMMON613_NODISCARD
 constexpr common613::ArrNi<A, IntT, N> linear_interpolate(

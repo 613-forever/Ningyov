@@ -11,7 +11,8 @@
 #include <dialog_video_generator/image.h>
 #include <dialog_video_generator/math/time_utils.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace dialog_video_generator {
+namespace drawable {
 
 /**
  * @brief Base class for all drawable elements.
@@ -56,25 +57,27 @@ class Static : public Drawable {
 public:
   ~Static() override;
 
-  /// @inheritdoc
   /// Static drawables need no frames to animate.
+  /// @retval 0_fr always.
   Frames duration() const final { return 0_fr; }
 
-  /// @inheritdoc
   /// Static drawables need only one layer.
+  /// @retval 1 always.
   std::size_t bufferCount() const final { return 1; }
 
-  /// @inheritdoc
   /// Static drawables are always static.
+  /// @retval 0 always.
   std::size_t nextFrame(Frames timeInScene) final { return 0; }
 
-  /// @inheritdoc
-  /// Static drawables are always static.
+  /// Static drawables do not change states.
   void nextScene(bool stop, Frames point) final {}
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 };
 
+/**
+ * @brief Base class for all static image-based elements.
+ */
 class StaticImage : public Static {
 public:
   friend class Drawable;
@@ -87,6 +90,7 @@ public:
   Size staticSize() const;
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
+
 protected:
   Image image;
 };
@@ -131,12 +135,21 @@ public:
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 };
 
+/**
+ * @brief A colored rectangle to paint.
+ */
 class ColorRect : public Static {
 public:
+  /// @brief Initializes a screen-sized rectangle with a specified @p color.
   explicit ColorRect(Color4b color);
+
+  /// @brief Initializes a color rectangle with a @p color, and position @p offset and size @p rect.
   ColorRect(Color4b color, Vec2i offset, Size rect);
+
   ~ColorRect() override;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+
 private:
   ColorImage colorImage;
 };
@@ -176,11 +189,12 @@ public:
   Frames duration() const override;
   std::size_t bufferCount() const override;
   std::size_t nextFrame(Frames timeInScene) override;
-  /// @inheritdoc
-  ///
-  /// Texts will keep the current status when crossing scenes, but it not recommended.
+
+  /// @note Texts will keep the current status when crossing scenes, but it is not a recommended feature.
   void nextScene(bool stop, Frames point) final {}
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+
 private:
   std::vector<Image> glyphs;
   Size size;
@@ -228,6 +242,7 @@ public:
   /// @brief Binds it to an external @p countDown variable.
   void bindEyeStatus(Frames* countDown);
 
+  /// @brief Refreshes a blink countdown, i.e., to re-generate a countdown.
   static void refreshEyeBlinkCountDown(Frames* countDown);
 
 private:
@@ -243,34 +258,28 @@ private:
 
 /**
  * @brief A wrapper to translate a drawable.
- * @sa translate
  */
 class Translated : public Drawable {
 public:
   /// @brief Wraps @p target, and translate it by @p offset.
   Translated(std::shared_ptr<Drawable> target, Vec2i offset);
+
   ~Translated() override;
-  Frames duration() const override {
-    return target->duration();
-  }
-  std::size_t bufferCount() const override {
-    return target->bufferCount();
-  }
-  std::size_t nextFrame(Frames timeInScene) override {
-    return target->nextFrame(timeInScene);
-  }
-  void nextScene(bool stop, Frames point) override {
-    target->nextScene(stop, point);
-  }
+
+  Frames duration() const override { return target->duration(); }
+  std::size_t bufferCount() const override { return target->bufferCount(); }
+  std::size_t nextFrame(Frames timeInScene) override { return target->nextFrame(timeInScene); }
+  void nextScene(bool stop, Frames point) override { target->nextScene(stop, point); }
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
+
 private:
   std::shared_ptr<Drawable> target;
   Vec2i translatedOffset;
 };
 
 /**
- * @brief A convenient function to construct @ref Translated by @ref Translated#Translated(target, offset)
- * @related Translate
+ * @brief A convenient function to construct @ref Translated by @ref Translated#Translated(target, offset) .
+ * @related Translated
  */
 inline std::shared_ptr<Translated> translate(std::shared_ptr<Drawable> target, Vec2i offset) {
   return std::make_shared<Translated>(std::move(target), offset);
@@ -279,46 +288,69 @@ inline std::shared_ptr<Translated> translate(std::shared_ptr<Drawable> target, V
 /**
  * @brief Base class for animated drawables.
  *
- * Note that no derivations has been implemented for the time being.
+ * Animation states in each frame should be rendered in such a pipeline:
+ * + calculated in @c nextFrame and stored in the object;
+ * + used in @c addTask.
  */
 class Animated : public Drawable {
 public:
+  /// @brief Sets the target drawable @p target to play an animation on.
   explicit Animated(std::shared_ptr<Drawable> target);
+
   ~Animated() override;
   Frames duration() const final;
+
+  /// @brief Returns the least duration for this animation.
+  /// @note Animation can be looped or infinite, a least animation duration should be provided.
   virtual Frames leastAnimationDuration() const = 0;
-  std::size_t bufferCount() const final {
-    return target->bufferCount();
-  }
+
+  std::size_t bufferCount() const final { return target->bufferCount(); }
   std::size_t nextFrame(Frames timeInScene) override = 0;
   void nextScene(bool stop, Frames point) override = 0;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
+
 protected:
   std::shared_ptr<Drawable> target;
 };
 
+/**
+ * @brief Base class for animated drawables with moving-like animations.
+ */
 class Movement : public Animated {
 public:
+  /// @brief Sets the target drawable @p target and move duration @p duration .
   Movement(std::shared_ptr<Drawable> target, Frames duration);
+
   ~Movement() override;
   Frames leastAnimationDuration() const final;
   std::size_t nextFrame(Frames timeInScene) override;
   void nextScene(bool stop, Frames point) override;
+
+  /// @brief Calculates offset in the specified frame in the moving process.
   virtual Vec2i calculateOffset(Frames timeInScene) const = 0;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const final;
 protected:
   Frames dur;
   Vec2i frameOffset;
 };
 
+/**
+ * @brief Base class for animated drawables with alpha-change animations.
+ */
 class AlphaChange : public Animated {
 public:
+  /// @brief Sets the target drawable @p target and move duration @p duration .
   AlphaChange(std::shared_ptr<Drawable> target, Frames duration);
+
   ~AlphaChange() override;
   Frames leastAnimationDuration() const final;
   std::size_t nextFrame(Frames timeInScene) override;
   void nextScene(bool stop, Frames point) override;
+
+  /// @brief Calculates alpha in the specified frame in the changing process.
   virtual int calculateAlpha(Frames timeInScene) const = 0;
+
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const final;
 protected:
   Frames dur;

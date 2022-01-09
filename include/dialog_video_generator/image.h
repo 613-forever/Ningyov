@@ -15,6 +15,7 @@
 #include <dialog_video_generator/cuda/cuda_utils.h>
 #include <dialog_video_generator/math/pos_utils.h>
 
+/// @cond
 // Forward declarations for png-related, to avoid including png++ headers here.
 namespace png {
 typedef unsigned char png_byte;
@@ -27,6 +28,7 @@ class solid_pixel_buffer;
 template <class pixel, class pixel_buffer_type>
 class image;
 }
+/// @endcond
 
 namespace dialog_video_generator { namespace image {
 
@@ -137,7 +139,11 @@ struct ColorImage {
   /// @brief The position to paste.
   Vec2i pos{Vec2i::of(0, 0)};
 
-  /// @copydoc Image#addTask
+  /**
+   * @brief Append a task into @p tasks with external position transformations.
+   * @param offset Extra offset when we paste it.
+   * @param extraAlpha Extra alpha information (0-16) used when pasting.
+   */
   void addTask(Vec2i offset, unsigned int extraAlpha, std::vector<DrawTask>& tasks) const;
 };
 
@@ -149,4 +155,4 @@ using image::ColorImage;
 
 }
 
-#endif // !DIALOGVIDEOGENERATOR_DRAWABLE_H
+#endif //DIALOGVIDEOGENERATOR_IMAGE_H

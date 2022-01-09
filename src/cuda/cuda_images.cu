@@ -21,18 +21,18 @@ __device__ void renderPixel(unsigned char* dst, const unsigned char* bg, const D
   if (task->isLinearFilter) {
     std::int16_t r = (
         std::int16_t(std::int8_t(task->image[0])) * bg[index * 4] +
-        std::int16_t(std::int8_t(task->image[3])) * bg[index * 4 + 1] +
-        std::int16_t(std::int8_t(task->image[6])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[9]);
+        std::int16_t(std::int8_t(task->image[1])) * bg[index * 4 + 1] +
+        std::int16_t(std::int8_t(task->image[2])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[3]);
     dst[index * 4 + 0] = r < 0 ? 0 : r > 255 ? 255 : std::uint8_t(r);
     std::int16_t g = (
-        std::int16_t(std::int8_t(task->image[1])) * bg[index * 4] +
-        std::int16_t(std::int8_t(task->image[4])) * bg[index * 4 + 1] +
-        std::int16_t(std::int8_t(task->image[7])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[10]);
+        std::int16_t(std::int8_t(task->image[4])) * bg[index * 4] +
+        std::int16_t(std::int8_t(task->image[5])) * bg[index * 4 + 1] +
+        std::int16_t(std::int8_t(task->image[6])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[7]);
     dst[index * 4 + 1] = g < 0 ? 0 : g > 255 ? 255 : std::uint8_t(g);
     std::int16_t b = (
-        std::int16_t(std::int8_t(task->image[2])) * bg[index * 4] +
-        std::int16_t(std::int8_t(task->image[5])) * bg[index * 4 + 1] +
-        std::int16_t(std::int8_t(task->image[8])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[11]);
+        std::int16_t(std::int8_t(task->image[8])) * bg[index * 4] +
+        std::int16_t(std::int8_t(task->image[9])) * bg[index * 4 + 1] +
+        std::int16_t(std::int8_t(task->image[10])) * bg[index * 4 + 2]) / 64 + std::int8_t(task->image[11]);
     dst[index * 4 + 2] = b < 0 ? 0 : b > 255 ? 255 : std::uint8_t(b);
   } else {
     int deltaY = static_cast<int>(y) - task->y0, deltaX = static_cast<int>(x) - task->x0;

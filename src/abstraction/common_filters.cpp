@@ -8,10 +8,9 @@ namespace dialog_video_generator { namespace abstraction {
 NostalgicFilter::NostalgicFilter() : LinearFilter(filterData) {}
 
 std::int8_t NostalgicFilter::filterData[12] = {
-    25, 22, 17,
-    49, 44, 34,
-    12, 11, 8,
-    0, 0, 0,
+    25, 49, 12, 0,
+    22, 44, 11, 0,
+    17, 34, 8, 0,
 };
 
 } }

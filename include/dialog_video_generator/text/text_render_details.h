@@ -17,30 +17,36 @@
 
 namespace dialog_video_generator { namespace font {
 
+/// @cond
 struct LibraryCloser {
   void operator()(FT_Library lib) {
     FT_Done_FreeType(lib);
   }
 };
+/// @endcond
 /// @brief Auto releasing @c FT_Library.
 using Library = std::unique_ptr<std::remove_pointer_t<FT_Library>, LibraryCloser>;
 extern Library library;
 
+/// @cond
 struct GlyphCloser {
   void operator()(FT_Glyph glyph) {
 //    BOOST_LOG_TRIVIAL(trace) << "Releasing a glyph";
     FT_Done_Glyph(glyph);
   }
 };
+/// @endcond
 /// @brief Auto releasing @c FT_Glyph. Now unused. Maybe used when multiple fonts are involved.
 using Glyph = std::unique_ptr<std::remove_pointer_t<FT_Glyph>, GlyphCloser>;
 
+/// @cond
 struct FaceCloser {
   void operator()(FT_Face face) {
 //    BOOST_LOG_TRIVIAL(trace) << "Releasing a typeface @" << (void*)face; // Global variable release.
     FT_Done_Face(face);
   }
 };
+/// @endcond
 /// @brief Auto releasing @c FT_Face.
 using Face = std::unique_ptr<std::remove_pointer_t<FT_Face>, FaceCloser>;
 /// @brief Opens a font face with specified @p filePathname.
