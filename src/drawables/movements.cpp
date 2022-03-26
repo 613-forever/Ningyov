@@ -85,12 +85,12 @@ Vec2i CubicEaseInOutMovement::calculateOffset(Frames timeInScene) const {
 //    auto interpolatedExt = linear_interpolate(startExt, endExt, tmp * tmp * tmp / 2, dur.x() * dur.x() * dur.x());
   } else {
     auto tmp = 2 * dur.x() - doubleTime.x();
-    auto x = std::round(linear_interpolate(double(start.x()),
-                                           double(end.x()),
+    auto x = std::round(linear_interpolate(double(end.x()),
+                                           double(start.x()),
                                            tmp * tmp * tmp / 2,
                                            dur.x() * dur.x() * dur.x()));
-    auto y = std::round(linear_interpolate(double(start.y()),
-                                           double(end.y()),
+    auto y = std::round(linear_interpolate(double(end.y()),
+                                           double(start.y()),
                                            tmp * tmp * tmp / 2,
                                            dur.x() * dur.x() * dur.x()));
     return Vec2i::of(x, y);

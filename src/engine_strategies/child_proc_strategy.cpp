@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 613_forever
 
-#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
 #include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu16.04/boost1.76.
 #include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including "WinSock.h" repeatedly.
-#include <dialog_video_generator/engine.h>
+#include <dialog_video_generator/engine.h> // target header
 
 #include <common613/compat/file_system.h>
 #include <dialog_video_generator/drawable.h>
@@ -39,7 +39,7 @@ void Engine::ChildProcVideo::init(const Engine* engine) {
         "-y", "-f", "rawvideo", "-pixel_format", "rgb24",
         "-video_size", std::to_string(config::WIDTH) + "x"s + std::to_string(config::HEIGHT),
         "-r", std::to_string(config::FRAMES_PER_SECOND),
-        "-i", "-", "-c:v", "libx265", "-pix_fmt", "yuv420p", "-maxrate", "6000k",
+        "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-maxrate", "6000k",
         targetDir + name,
         boost::process::std_in < *stream, boost::process::std_out > stderr, boost::process::std_err > stderr) };
   } catch (boost::process::process_error& e) {

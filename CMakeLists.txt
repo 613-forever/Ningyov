@@ -15,7 +15,7 @@ if (DEFINED Common613_ROOT_DIR)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Common613_ROOT_DIR}/cmake")
 endif()
 if (COMMON613_STACKTRACE_DEBUG)
-    add_definitions(-DCOMMON613_STACKTRACE_DEBUG)
+    add_definitions(-DCOMMON613_STACKTRACE_DEBUG=1)
 endif()
 
 cmake_policy(SET CMP0104 OLD)
@@ -38,7 +38,7 @@ find_package(Freetype REQUIRED)
 
 if (NOT DIALOG_VIDEO_GENERATOR_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
 #    find_package(Boost REQUIRED COMPONENTS headers) # process
-    add_definitions(-DDIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
+    add_definitions(-DDIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
     link_libraries(Boost::headers)
 endif ()
 if (MSVC)

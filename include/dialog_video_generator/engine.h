@@ -146,7 +146,7 @@ public:
   private:
     std::string targetDir, format;
   };
-#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_STRATEGY
+#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_STRATEGY
   /// @brief Strategy saving the frame using FFMpeg.
   class SaveVideo: public Strategy {
   public:
@@ -162,7 +162,7 @@ public:
     std::string targetDir, name;
   };
 #endif
-#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_GPU_STRATEGY
+#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_GPU_STRATEGY
   /// @brief Strategy saving the frame using VideoCodec.
   class SaveVideoGPU : public Strategy {
   public:
@@ -186,7 +186,7 @@ public:
     void handleFrame(const Engine* engine, size_t index) override;
     void cleanup(const Engine* engine) override;
   };
-#ifdef DIALOG_VIDEO_GENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
   /// @brief Strategy starting a FFMpeg subprocess when initialized, and piping the frame into it.
   class ChildProcVideo : public Strategy {
   public:
