@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file
 /// @brief Animations with alpha changing, derivation classes of @ref AlphaChange .
@@ -19,7 +19,7 @@ class FadeIn : public AlphaChange {
 public:
   FadeIn(const std::shared_ptr<Drawable>& target, const Frames& duration);
   ~FadeIn() override;
-  int calculateAlpha(Frames timeInScene) const override;
+  int calculateAlpha(Frames timeInShot) const override;
 };
 
 /**
@@ -29,7 +29,7 @@ class FadeOut : public AlphaChange {
 public:
   FadeOut(const std::shared_ptr<Drawable>& target, const Frames& duration);
   ~FadeOut() override;
-  int calculateAlpha(Frames timeInScene) const override;
+  int calculateAlpha(Frames timeInShot) const override;
 };
 
 } }

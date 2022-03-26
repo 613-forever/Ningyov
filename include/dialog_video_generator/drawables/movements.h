@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file
 /// @brief Animations with position changing, derivation classes of @ref Movement .
@@ -22,7 +22,7 @@ public:
   SimpleMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames duration);
   SimpleMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames duration);
   ~SimpleMovement() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   Vec2i start, end;
 };
@@ -38,7 +38,7 @@ public:
   CubicEaseInMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames duration);
   CubicEaseInMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames duration);
   ~CubicEaseInMovement() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   Vec2i start, end;
 };
@@ -54,7 +54,7 @@ public:
   CubicEaseOutMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames duration);
   CubicEaseOutMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames duration);
   ~CubicEaseOutMovement() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   Vec2i start, end;
 };
@@ -70,7 +70,7 @@ public:
   CubicEaseInOutMovement(std::shared_ptr<Drawable> target, Vec2i endOffset, Frames duration);
   CubicEaseInOutMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames duration);
   ~CubicEaseInOutMovement() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   Vec2i start, end;
 };

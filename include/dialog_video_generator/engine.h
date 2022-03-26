@@ -61,12 +61,12 @@ public:
  * Before using the engine, register a series of strategies into it.
  *
  * We can push layers into it.
- * The engine will render the layers into a sequence of frames, called a scene.
- * (In fact, it should not be called a scene, but I don't know how to name it better.)
+ * The engine will render the layers into a sequence of frames, called a @b shot.
+ * (In fact, it should not be called so, but I don't know how to name it better.)
  * For every frame, the strategies are called, which can be used to save or output the frames.
  *
- * Clear the states, reset the scene, and another scene can be re-rendered with the layers.
- * Of course, layers can be changed, modified or just left untouched, and then reused to make another sequence.
+ * Clear the states, reset the shot, and another shot can be re-rendered with the layers.
+ * Of course, layers can be changed, modified or just left untouched and reused, to make another sequence.
  */
 class Engine {
 public:
@@ -84,27 +84,37 @@ public:
   /// @brief Returns a reference to the underlying layers.
   std::vector<std::shared_ptr<Drawable>>& getLayers() { return layers; }
 
-  /// @brief Clears states to prepare for another scene.
-  void nextScene(bool stop = true);
+  /// @brief Clears states to prepare for another shot.
+  void nextShot(bool stop = true);
 
-  /// @brief Renders the scene, i.e., generates frames and calls strategies.
-  void renderScene() const;
+  /// @brief Renders the shot, i.e., generates frames and calls strategies.
+  void renderShot() const;
 
 private:
   void prepareMiddleResultBuffers(std::size_t size) const;
   void renderFirstFrame() const;
-  void renderNonFirstFrame(Frames timeInScene) const;
+  void renderNonFirstFrame(Frames timeInShot) const;
   void renderTasks(size_t startBuffer, size_t bg, const std::vector<DrawTask>& tasks, size_t skippedTaskNumber) const;
 
 public:
-  /// @brief Set a scene to be at a length of @p fr.
+  /// @brief Set a shot to be at a length of @p fr.
   void setWaitLength(Frames fr);
-  /// @brief Set a scene to wait after all animation layers finishes, at a length of @p fr.
+  /// @brief Shortcut to @c setWaitLength followed by @c renderShot .
+  void setWaitAndRender(Frames fr) {
+    setWaitLength(fr);
+    renderShot();
+  }
+  /// @brief Set a shot to wait after all animation layers finishes, at a length of @p fr.
   void setTotalLength(Frames fr);
+  /// @brief Shortcut to @c setTotalLength followed by @c renderShot .
+  void setTotalAndRender(Frames fr) {
+    setTotalLength(fr);
+    renderShot();
+  }
 
   /// @brief Returns the length when at least one animation layer is active.
   Frames getActiveLength() const;
-  /// @brief Returns the total length of the scene.
+  /// @brief Returns the total length of the shot.
   Frames getTotalLength() const;
 
   /// @brief Returns the count of the buffers prepared for the layers.

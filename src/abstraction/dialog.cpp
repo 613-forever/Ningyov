@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/abstraction/dialog.h>
 
@@ -18,15 +18,16 @@ std::size_t Dialog::bufferCount() const {
   return dialog->bufferCount() + text->bufferCount();
 }
 
-std::size_t Dialog::nextFrame(Frames timeInScene) {
-  std::size_t dialogUpdate = dialog->nextFrame(timeInScene);
-  std::size_t textUpdate = text->nextFrame(timeInScene);
+std::size_t Dialog::nextFrame(Frames timeInShot) {
+  std::size_t dialogUpdate = dialog->nextFrame(timeInShot);
+  std::size_t textUpdate = text->nextFrame(timeInShot);
   return dialogUpdate > 0 ? dialogUpdate + textUpdate : textUpdate;
 }
 
-void Dialog::nextScene(bool stop, Frames point) {
-  dialog->nextScene(stop, point);
-  text->nextScene(stop, point);
+std::shared_ptr<Drawable> Dialog::nextShot(bool stop, Frames point) {
+  dialog->nextShot(stop, point);
+  text->nextShot(stop, point);
+  return shared_from_this();
 }
 
 void Dialog::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {

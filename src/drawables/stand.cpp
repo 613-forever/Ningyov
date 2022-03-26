@@ -19,8 +19,8 @@ Stand::Stand(const std::string& dir, const std::string& pose, const std::string&
   std::string posDir = dir + pose + '/', poseUpper(pose.size(), '\0');
   std::transform(pose.begin(), pose.end(), poseUpper.begin(), [](char c) { return std::toupper(c); });
   image.raw.load(posDir, poseUpper, true);
-  image.pos.x() = -checked_cast<Dim>(image.raw.size.w() * mul / 2);
-  image.pos.y() = -checked_cast<Dim>(image.raw.size.h() * mul); // unchecked cast
+  image.pos.x() = checked_cast<Dim>(image.raw.size.w() * mul / -2);
+  image.pos.y() = checked_cast<Dim>(-image.raw.size.h() * mul); // unchecked cast
   image.flipX = flip;
   std::int32_t pos[4];
   {
@@ -63,11 +63,11 @@ std::size_t Stand::bufferCount() const {
   return 3;
 }
 
-std::size_t Stand::nextFrame(Frames timeInScene) {
-  int last = mouthStatus;
+std::size_t Stand::nextFrame(Frames timeInShot) {
+  auto last = mouthStatus;
   int ret = 0;
-  if (speaking > 0_fr && timeInScene <= speaking) {
-    if (timeInScene.x() % 3 == 0) {
+  if (speaking > 0_fr && timeInShot <= speaking) {
+    if (timeInShot.x() % 3 == 0) {
       switch (mouthStatus) {
       case 0: {
         std::bernoulli_distribution dist(0.8);
@@ -106,8 +106,9 @@ std::size_t Stand::nextFrame(Frames timeInScene) {
   return ret;
 }
 
-void Stand::nextScene(bool stop, Frames point) {
+std::shared_ptr<Drawable> Stand::nextShot(bool stop, Frames point) {
   speaking = stop || point > speaking ? 0_fr : speaking - point;
+  return shared_from_this();
 }
 
 void Stand::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {
