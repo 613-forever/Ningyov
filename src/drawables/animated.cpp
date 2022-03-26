@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/drawable.h>
 
@@ -20,12 +20,12 @@ Movement::Movement(std::shared_ptr<Drawable> target, Frames duration)
 
 Movement::~Movement() = default;
 
-std::size_t Movement::nextFrame(Frames timeInScene) {
-  std::size_t leastChangedBuffer = target->nextFrame(timeInScene);
-  if (timeInScene > dur) {
+std::size_t Movement::nextFrame(Frames timeInShot) {
+  std::size_t leastChangedBuffer = target->nextFrame(timeInShot);
+  if (timeInShot > dur) {
     return leastChangedBuffer;
   }
-  Vec2i nextFrameOffset = calculateOffset(timeInScene);
+  Vec2i nextFrameOffset = calculateOffset(timeInShot);
   auto changedCount = nextFrameOffset == frameOffset ? leastChangedBuffer : bufferCount();
   frameOffset = nextFrameOffset;
   return changedCount;
@@ -35,9 +35,14 @@ Frames Movement::leastAnimationDuration() const {
   return dur;
 }
 
-void Movement::nextScene(bool stop, Frames duration) {
-  // TODO: take off the wrapper?
-  target->nextScene(stop, duration);
+std::shared_ptr<Drawable> Movement::nextShot(bool stop, Frames duration) {
+  auto targetInNextShot = target->nextShot(stop, duration);
+  if (duration > dur) {
+    return targetInNextShot;
+  } else {
+    target = targetInNextShot;
+    return shared_from_this();
+  }
 }
 
 void Movement::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {
@@ -49,12 +54,12 @@ AlphaChange::AlphaChange(std::shared_ptr<Drawable> target, Frames duration)
 
 AlphaChange::~AlphaChange() = default;
 
-std::size_t AlphaChange::nextFrame(Frames timeInScene) {
-  std::size_t leastChangedBuffer = target->nextFrame(timeInScene);
-  if (timeInScene > dur) {
+std::size_t AlphaChange::nextFrame(Frames timeInShot) {
+  std::size_t leastChangedBuffer = target->nextFrame(timeInShot);
+  if (timeInShot > dur) {
     return leastChangedBuffer;
   }
-  int nextFrameAlpha = calculateAlpha(timeInScene);
+  int nextFrameAlpha = calculateAlpha(timeInShot);
   auto changedCount = nextFrameAlpha == frameAlpha ? leastChangedBuffer : bufferCount();
   frameAlpha = nextFrameAlpha;
   return changedCount;
@@ -64,9 +69,14 @@ Frames AlphaChange::leastAnimationDuration() const {
   return dur;
 }
 
-void AlphaChange::nextScene(bool stop, Frames duration) {
-  // TODO: take off the wrapper?
-  target->nextScene(stop, duration);
+std::shared_ptr<Drawable> AlphaChange::nextShot(bool stop, Frames duration) {
+  auto targetInNextShot = target->nextShot(stop, duration);
+  if (duration > dur) {
+    return targetInNextShot;
+  } else {
+    target = targetInNextShot;
+    return shared_from_this();
+  }
 }
 
 void AlphaChange::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {

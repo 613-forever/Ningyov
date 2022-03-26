@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/abstraction/character.h>
 
@@ -86,12 +86,12 @@ void Character::setOffset(Vec2i newOffset) {
   offset = newOffset;
 }
 
-void Character::keepsAllInNextScene() {
-  stand->nextScene(false, 0_fr);
+void Character::keepsAllInNextShot() {
+  stand->nextShot(false, 0_fr);
   actionAnimated = true;
 }
 
-void Character::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip/* = false*/) {
+void Character::changesExprInNextShot(const std::string& pose, const std::string& expression, bool flip/* = false*/) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   stand = std::make_shared<Stand>(
       standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
@@ -101,12 +101,12 @@ void Character::changesExprInNextScene(const std::string& pose, const std::strin
   actionAnimated = true;
 }
 
-void Character::movesInNextScene(const std::string& pose, const std::string& expression, Vec2i moveTo) {
+void Character::movesInNextShot(const std::string& pose, const std::string& expression, Vec2i newOffset) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   // TODO: move animation
 }
 
-void Character::speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/) {
+void Character::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/) {
   if (hasStandToDraw && drawStand) {
     COMMON613_REQUIRE(stand != nullptr, "Setting character speaking before expression.");
     stand->setSpeakingDuration(lines->duration());
@@ -114,10 +114,10 @@ void Character::speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lin
   setAction(newAction);
 }
 
-void Character::speaksAndChangesExprInNextScene(const std::shared_ptr<drawable::TextLike>& lines,
-                                                const std::string& pose, const std::string& expression,
-                                                bool flip/* = false*/,
-                                                Action newAction /*= Action::NORMAL*/) {
+void Character::speaksAndChangesExprInNextShot(const std::shared_ptr<drawable::TextLike>& lines,
+                                               const std::string& pose, const std::string& expression,
+                                               bool flip/* = false*/,
+                                               Action newAction /*= Action::NORMAL*/) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
   stand = std::make_shared<Stand>(
       standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),

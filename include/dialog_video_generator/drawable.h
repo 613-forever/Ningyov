@@ -22,24 +22,28 @@ namespace drawable {
  * We only repaint drawables that are changed themselves, or are after a changed layer.
  * So @c bufferCount provides the number of layers, and @c nextFrame provides how many layers should be repainted.
  */
-class Drawable {
+class Drawable : public std::enable_shared_from_this<Drawable> {
 public:
   virtual ~Drawable() = default;
 
   /// @brief Get naturally minimal duration of the layer.
-  virtual Frames duration() const = 0;
+  COMMON613_NODISCARD virtual Frames duration() const = 0;
 
   /// @brief Gets the number of buffers needed to draw.
   /// @note It is also the number of layers.
-  virtual std::size_t bufferCount() const = 0;
+  COMMON613_NODISCARD virtual std::size_t bufferCount() const = 0;
 
   /// @brief Calculates the status in the next frame, changes into it, and returns the number of layers to redraw.
-  virtual std::size_t nextFrame(Frames timeInScene) = 0;
+  virtual std::size_t nextFrame(Frames timeInShot) = 0;
 
-  /// @brief Stops the drawable and move it into another scene.
+  /// @brief Stops the drawable and move it into another shot.
   /// @param stop Whether any animation should be stop if any.
-  /// @param point The time point to continue in the next scene, if any animation is playing and not stopped.
-  virtual void nextScene(bool stop, Frames point) = 0;
+  /// @param point The time point to continue in the next shot, if any animation is playing and not stopped.
+  /// @return @c Drawable object to render in next shot.
+  /// @retval shared_from_this if not changed.
+  COMMON613_NODISCARD virtual std::shared_ptr<Drawable> nextShot(bool stop, Frames point) {
+    return shared_from_this();
+  }
 
   /// @brief Generates tasks to draw itself.
   /// @param offset The extra vector offset in the tasks.
@@ -67,10 +71,7 @@ public:
 
   /// Static drawables are always static.
   /// @retval 0 always.
-  std::size_t nextFrame(Frames timeInScene) final { return 0; }
-
-  /// Static drawables do not change states.
-  void nextScene(bool stop, Frames point) final {}
+  std::size_t nextFrame(Frames timeInShot) final { return 0; }
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 };
@@ -163,7 +164,6 @@ class UpdatedByFrame : public Drawable {
 public:
   Frames duration() const override = 0;
   std::size_t bufferCount() const override = 0;
-  void nextScene(bool stop, Frames point) override = 0;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 };
 
@@ -188,10 +188,11 @@ public:
 
   Frames duration() const override;
   std::size_t bufferCount() const override;
-  std::size_t nextFrame(Frames timeInScene) override;
+  /// @bug Texts shows more characters when called this, ignoring @p timeInShot !!!
+  std::size_t nextFrame(Frames timeInShot) override;
 
-  /// @note Texts will keep the current status when crossing scenes, but it is not a recommended feature.
-  void nextScene(bool stop, Frames point) final {}
+  /// @warning Texts will keep the current status when crossing shots, which is convenient but not recommended.
+  using Drawable::nextShot;
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 
@@ -232,8 +233,9 @@ public:
   ~Stand() override;
   Frames duration() const override;
   std::size_t bufferCount() const override;
-  std::size_t nextFrame(Frames timeInScene) override;
-  void nextScene(bool stop, Frames point) override;
+  /// @warning Calling this changes blink countdown.
+  std::size_t nextFrame(Frames timeInShot) override;
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 
   /// @brief Sets the stand will speak for @p frames.
@@ -252,8 +254,8 @@ private:
   Frames speaking;
   // for next frame
   Frames* eyeBlinkCountDown; // (external)
-  std::size_t eyeStatus; // eye status
-  std::size_t mouthStatus; // mouth status
+  std::uint8_t eyeStatus; // eye status
+  std::uint8_t mouthStatus; // mouth status
 };
 
 /**
@@ -268,8 +270,11 @@ public:
 
   Frames duration() const override { return target->duration(); }
   std::size_t bufferCount() const override { return target->bufferCount(); }
-  std::size_t nextFrame(Frames timeInScene) override { return target->nextFrame(timeInScene); }
-  void nextScene(bool stop, Frames point) override { target->nextScene(stop, point); }
+  std::size_t nextFrame(Frames timeInShot) override { return target->nextFrame(timeInShot); }
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override {
+    target = target->nextShot(stop, point);
+    return shared_from_this();
+  }
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 
 private:
@@ -305,8 +310,7 @@ public:
   virtual Frames leastAnimationDuration() const = 0;
 
   std::size_t bufferCount() const final { return target->bufferCount(); }
-  std::size_t nextFrame(Frames timeInScene) override = 0;
-  void nextScene(bool stop, Frames point) override = 0;
+  std::size_t nextFrame(Frames timeInShot) override = 0;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override = 0;
 
 protected:
@@ -323,11 +327,11 @@ public:
 
   ~Movement() override;
   Frames leastAnimationDuration() const final;
-  std::size_t nextFrame(Frames timeInScene) override;
-  void nextScene(bool stop, Frames point) override;
+  std::size_t nextFrame(Frames timeInShot) override;
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override;
 
   /// @brief Calculates offset in the specified frame in the moving process.
-  virtual Vec2i calculateOffset(Frames timeInScene) const = 0;
+  virtual Vec2i calculateOffset(Frames timeInShot) const = 0;
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const final;
 protected:
@@ -345,11 +349,11 @@ public:
 
   ~AlphaChange() override;
   Frames leastAnimationDuration() const final;
-  std::size_t nextFrame(Frames timeInScene) override;
-  void nextScene(bool stop, Frames point) override;
+  std::size_t nextFrame(Frames timeInShot) override;
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override;
 
   /// @brief Calculates alpha in the specified frame in the changing process.
-  virtual int calculateAlpha(Frames timeInScene) const = 0;
+  virtual int calculateAlpha(Frames timeInShot) const = 0;
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const final;
 protected:

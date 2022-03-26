@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file action_animations.h
 /// @brief Implementations for animations in actions.
@@ -21,7 +21,7 @@ class Shouting : public drawable::Movement {
 public:
   explicit Shouting(std::shared_ptr<Drawable> target);
   ~Shouting() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   constexpr static const long double LENGTH_SECOND = 0.5;
 };
@@ -43,7 +43,7 @@ class Murmuring : public drawable::Movement {
 public:
   explicit Murmuring(std::shared_ptr<Drawable> target);
   ~Murmuring() override;
-  Vec2i calculateOffset(Frames timeInScene) const override;
+  Vec2i calculateOffset(Frames timeInShot) const override;
 private:
   constexpr static const long double LENGTH_SECOND = 2;
 };

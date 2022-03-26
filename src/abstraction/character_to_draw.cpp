@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/abstraction/character_to_draw.h>
 
@@ -28,14 +28,15 @@ size_t CharacterToDraw::bufferCount() const {
   return stand->bufferCount();
 }
 
-size_t CharacterToDraw::nextFrame(Frames timeInScene) {
+size_t CharacterToDraw::nextFrame(Frames timeInShot) {
   assert(stand != nullptr); // hidden but asked to be displayed?
-  return stand->nextFrame(timeInScene);
+  return stand->nextFrame(timeInShot);
 }
 
-void CharacterToDraw::nextScene(bool stop, Frames point) {
+std::shared_ptr<drawable::Drawable> CharacterToDraw::nextShot(bool stop, Frames point) {
   assert(stand != nullptr); // hidden but asked to be displayed?
-  stand->nextScene(stop, point);
+  stand->nextShot(stop, point);
+  return shared_from_this();
 }
 
 void CharacterToDraw::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {
@@ -43,37 +44,37 @@ void CharacterToDraw::addTask(Vec2i offset, unsigned int alpha, std::vector<Draw
   stand->addTask(offset, alpha, tasks);
 }
 
-void CharacterToDraw::keepsAllInNextScene() {
-  Character::keepsAllInNextScene();
+void CharacterToDraw::keepsAllInNextShot() {
+  Character::keepsAllInNextShot();
   stand = getStand();
   dialog = nullptr;
 }
 
-void CharacterToDraw::changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip) {
-  Character::changesExprInNextScene(pose, expression, flip);
+void CharacterToDraw::changesExprInNextShot(const std::string& pose, const std::string& expression, bool flip) {
+  Character::changesExprInNextShot(pose, expression, flip);
   stand = getStand();
   dialog = nullptr;
 }
 
-void CharacterToDraw::movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset) {
-  Character::movesInNextScene(pose, expression, newOffset);
+void CharacterToDraw::movesInNextShot(const std::string& pose, const std::string& expression, Vec2i newOffset) {
+  Character::movesInNextShot(pose, expression, newOffset);
   stand = getStand();
   dialog = nullptr;
 }
 
-std::shared_ptr<Drawable> CharacterToDraw::speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lines, Action newAction) {
-  Character::speaksInNextScene(lines, newAction);
+std::shared_ptr<Drawable> CharacterToDraw::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction) {
+  Character::speaksInNextShot(lines, newAction);
   stand = getStand();
   dialog = Character::getDialog(lines);
   return dialog;
 }
 
-std::shared_ptr<Drawable> CharacterToDraw::speaksAndChangesExprInNextScene(const std::shared_ptr<drawable::TextLike>& lines,
+std::shared_ptr<Drawable> CharacterToDraw::speaksAndChangesExprInNextShot(const std::shared_ptr<drawable::TextLike>& lines,
                                                       const std::string& pose,
                                                       const std::string& expression,
                                                       bool flip,
                                                       Action newAction) {
-  Character::speaksAndChangesExprInNextScene(lines, pose, expression, flip, newAction);
+  Character::speaksAndChangesExprInNextShot(lines, pose, expression, flip, newAction);
   stand = getStand();
   dialog = Character::getDialog(lines);
   return dialog;

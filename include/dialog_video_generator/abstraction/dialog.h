@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #pragma once
 #ifndef DIALOGVIDEOGENERATOR_DIALOG_H
@@ -15,8 +15,8 @@ public:
   ~Dialog() override;
   Frames duration() const override;
   std::size_t bufferCount() const override;
-  std::size_t nextFrame(Frames timeInScene) override;
-  void nextScene(bool stop, Frames point) override;
+  std::size_t nextFrame(Frames timeInShot) override;
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override;
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 private:
   std::shared_ptr<drawable::Texture> dialog;

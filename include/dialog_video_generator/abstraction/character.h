@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file
 /// @brief Abstraction for characters.
@@ -66,13 +66,13 @@ private:
 public:
   void setOffset(Vec2i newOffset);
 
-  void keepsAllInNextScene();
-  void changesExprInNextScene(const std::string& pose, const std::string& expression, bool flip = false);
-  void movesInNextScene(const std::string& pose, const std::string& expression, Vec2i newOffset);
-  void speaksInNextScene(const std::shared_ptr<drawable::TextLike>& lines, Action newAction = Action::NORMAL);
-  void speaksAndChangesExprInNextScene(const  std::shared_ptr<drawable::TextLike>& lines,
-                                       const std::string& pose, const std::string& expression, bool flip = false,
-                                       Action newAction = Action::NORMAL);
+  void keepsAllInNextShot();
+  void changesExprInNextShot(const std::string& pose, const std::string& expression, bool flip = false);
+  void movesInNextShot(const std::string& pose, const std::string& expression, Vec2i newOffset);
+  void speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction = Action::NORMAL);
+  void speaksAndChangesExprInNextShot(const  std::shared_ptr<drawable::TextLike>& lines,
+                                      const std::string& pose, const std::string& expression, bool flip = false,
+                                      Action newAction = Action::NORMAL);
 
   std::shared_ptr<drawable::Drawable> getStand();
   std::shared_ptr<drawable::Drawable> getDialog(const std::shared_ptr<drawable::TextLike>& speaking);
@@ -88,9 +88,9 @@ private:
   // unlikely to change ( changes only when first-person changes )
   std::shared_ptr<drawable::Texture> dialog, thinkingDialog, shoutingDialog, murmuringDialog;
   std::shared_ptr<drawable::Stand> stand{};
-  // scene-wise
+  // shot-wise
   Action action;
-  bool actionAnimated; // true: depress action animation. useful when the scene follows another which has animated it.
+  bool actionAnimated; // true: depress action animation. useful when the shot follows another which has animated it.
   Vec2i offset;
   std::string poseFmt, exprFmt;
 };

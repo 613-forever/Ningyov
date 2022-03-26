@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/engine.h>
 
@@ -32,17 +32,17 @@ Engine::~Engine() {
   }
 }
 
-void Engine::nextScene(bool stop) {
+void Engine::nextShot(bool stop) {
   Frames length = getTotalLength();
   for (auto& layer: layers) {
-    layer->nextScene(stop, length);
+    layer->nextShot(stop, length);
   }
   start = start + length;
   wait = 0_fr;
   activeCache = 0_fr;
 }
 
-void Engine::renderScene() const {
+void Engine::renderShot() const {
   // for frames render
   BOOST_LOG_TRIVIAL(info) << fmt::format("Rendering Frame {}.", start.x());
   renderFirstFrame();
@@ -59,7 +59,7 @@ void Engine::renderScene() const {
       strategy->handleFrame(this, index);
     }
   }
-  BOOST_LOG_TRIVIAL(trace) << "Finished rendering for one scene.";
+  BOOST_LOG_TRIVIAL(trace) << "Finished rendering for one shot.";
 }
 
 void Engine::prepareMiddleResultBuffers(size_t size) const {
@@ -109,14 +109,14 @@ void Engine::renderFirstFrame() const {
   }
 }
 
-void Engine::renderNonFirstFrame(Frames timeInScene) const {
+void Engine::renderNonFirstFrame(Frames timeInShot) const {
   if (!layers.empty()) {
     std::vector<DrawTask> tasks;
     bool staticFlag = true;
     std::size_t skippedTask, layerDynamic, firstDynamicBuffer;
     for (auto i = 0; i < layers.size(); ++i) {
       if (staticFlag) {
-        layerDynamic = layers[i]->nextFrame(timeInScene);
+        layerDynamic = layers[i]->nextFrame(timeInShot);
         if (layerDynamic == 0) {
           continue;
         } else {
@@ -125,7 +125,7 @@ void Engine::renderNonFirstFrame(Frames timeInScene) const {
           skippedTask = bufferCount[i] - layerDynamic;
         }
       } else {
-        layers[i]->nextFrame(timeInScene);
+        layers[i]->nextFrame(timeInShot);
       }
       layers[i]->addTask(Vec2i{0, 0}, 16, tasks);
     }

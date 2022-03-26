@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/drawable.h>
 
@@ -78,10 +78,10 @@ std::size_t TextLike::bufferCount() const {
   return glyphs.size();
 }
 
-std::size_t TextLike::nextFrame(Frames timeInScene) {
+std::size_t TextLike::nextFrame(Frames timeInShot) {
   std::size_t last = current;
   if (last < glyphs.size()) {
-    current = start + (timeInScene.x() * speedNum + speedDen - 1) / speedDen;
+    current = start + (timeInShot.x() * speedNum + speedDen - 1) / speedDen;
     if (current > glyphs.size()) {
       current = glyphs.size();
     }
