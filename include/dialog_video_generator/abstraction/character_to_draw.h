@@ -26,10 +26,11 @@ public:
   void keepsAllInNextShot();
   void changesExprInNextShot(const std::string& pose, const std::string& expression, bool flip = false);
   void movesInNextShot(const std::string& pose, const std::string& expression, Vec2i newOffset);
-  std::shared_ptr<Drawable> speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction = Action::NORMAL);
+  std::shared_ptr<Drawable> speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction = Action::NORMAL,
+                                             bool addMouthAnimation = true);
   std::shared_ptr<Drawable> speaksAndChangesExprInNextShot(const std::shared_ptr<drawable::TextLike>& lines,
                                        const std::string& pose, const std::string& expression, bool flip = false,
-                                       Action newAction = Action::NORMAL);
+                                       Action newAction = Action::NORMAL, bool addMouthAnimation = true);
   void setOffset(Vec2i offset);
 
   std::shared_ptr<Drawable> getDialog();

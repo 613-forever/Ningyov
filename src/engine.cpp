@@ -35,7 +35,7 @@ Engine::~Engine() {
 void Engine::nextShot(bool stop) {
   Frames length = getTotalLength();
   for (auto& layer: layers) {
-    layer->nextShot(stop, length);
+    layer = layer->nextShot(stop, length);
   }
   start = start + length;
   wait = 0_fr;

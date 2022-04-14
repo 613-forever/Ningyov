@@ -48,6 +48,7 @@ void Character::clearDialogResources(bool firstPerson) {
   thinkingDialog = nullptr;
   shoutingDialog = nullptr;
   murmuringDialog = nullptr;
+  isFirstPerson = firstPerson;
 }
 
 void Character::initEyeBinder() {
@@ -106,10 +107,13 @@ void Character::movesInNextShot(const std::string& pose, const std::string& expr
   // TODO: move animation
 }
 
-void Character::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/) {
+void Character::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/,
+                                 bool addMouthAnimation/* = true*/) {
   if (hasStandToDraw && drawStand) {
     COMMON613_REQUIRE(stand != nullptr, "Setting character speaking before expression.");
-    stand->setSpeakingDuration(lines->duration());
+    if (addMouthAnimation) {
+      stand->setSpeakingDuration(lines->duration());
+    }
   }
   setAction(newAction);
 }
@@ -117,11 +121,12 @@ void Character::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& line
 void Character::speaksAndChangesExprInNextShot(const std::shared_ptr<drawable::TextLike>& lines,
                                                const std::string& pose, const std::string& expression,
                                                bool flip/* = false*/,
-                                               Action newAction /*= Action::NORMAL*/) {
+                                               Action newAction/* = Action::NORMAL*/,
+                                               bool addMouthAnimation/* = true*/) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
   stand = std::make_shared<Stand>(
       standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
-      config::STAND_MULTIPLIER, lines->duration(), flip
+      config::STAND_MULTIPLIER, addMouthAnimation ? lines->duration() : 0_fr, flip
   );
   stand->bindEyeStatus(&eyeBinder);
   setAction(newAction);
