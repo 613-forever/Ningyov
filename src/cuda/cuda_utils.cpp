@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/cuda/cuda_utils.h>
 
 #include <cuda_runtime.h>
+#include <dialog_video_generator/config.h>
 
 namespace dialog_video_generator { namespace cuda {
 
@@ -31,6 +32,18 @@ CudaMemory copyFromCPUMemory(const void* memory, unsigned int size) {
 void init() {
   using namespace config;
 
+  if (WIDTH_BATCHES == 0) {
+    WIDTH_BATCHES = (
+        WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 1 ? 1 :
+        WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 2 ? 2 :
+        WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 4 ? 4 :
+        WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 8 ? 8 :
+        WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 16 ? 16 :
+        32
+    );
+  }
+  THREAD_PER_BLOCK = WIDTH / WIDTH_BATCHES;
+
   BOOST_LOG_TRIVIAL(trace) << "Initializing Cuda...";
   int count;
   cudaGetDeviceCount(&count);
@@ -57,23 +70,13 @@ void init() {
   if (auto error = cudaSetDevice(i)) {
     COMMON613_FATAL("CudaSetDevice failed. Error code: {}.", error);
   }
-
-  WIDTH_BATCHES = (
-      WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 1 ? 1 :
-      WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 2 ? 2 :
-      WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 4 ? 4 :
-      WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 8 ? 8 :
-      WIDTH <= GPU_MAX_THREAD_PER_BLOCK * 16 ? 16 :
-      32
-  );
-  THREAD_PER_BLOCK = WIDTH / WIDTH_BATCHES;
 }
 
 }
 
 namespace config {
-std::uint16_t WIDTH_BATCHES = 256;
-std::uint16_t THREAD_PER_BLOCK = 4;
+std::uint16_t WIDTH_BATCHES = 0;
+std::uint16_t THREAD_PER_BLOCK = 0;
 }
 
 #if 0

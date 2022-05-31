@@ -172,6 +172,8 @@ public:
  *
  * Texts will be shown in order in a constant speed.
  * Note that the speed will be approximated as numbers of new characters for every frame.
+ *
+ * @warning TextLike does not provide frame-reentrant guarantee by now. It always changes to the next frame.
  */
 class TextLike : public UpdatedByFrame {
 public:
@@ -180,9 +182,10 @@ public:
    * @param colorType Whether it should be rendered in thinking color.
    * @param start The index of the character, before which characters are displayed before the first frame.
    * @param speedNum,speedDen In every new frame, @p speedNum / @p speedDen characters appears.
+   * @param fontIndex Font index.
    */
   TextLike(const std::string& content, Vec2i pos, Size sz, bool colorType = false,
-           std::size_t start = 0, std::size_t speedNum = 1, std::size_t speedDen = 2);
+           std::size_t start = 0, std::size_t speedNum = 1, std::size_t speedDen = 2, std::size_t fontIndex = 0);
 
   ~TextLike() override;
 
@@ -204,6 +207,15 @@ private:
   bool colorType; // 0 = speaking, black; 1 = thinking, blue
 };
 
+class StatusSelector {
+public:
+  virtual ~StatusSelector() = default;
+  virtual bool select(Frames timeInShot) = 0;
+  virtual Frames leastDuration() const { return 0_fr; }
+  virtual void nextShot(bool stop, Frames point) {};
+  std::size_t status{0};
+};
+
 /**
  * @brief Stand CG, or @e Tachie (<span lang="ja">立ち絵</span>).
  *
@@ -211,6 +223,8 @@ private:
  * An eye status variable should be provided externally to bind here.
  *
  * @note The origin of a @p Stand is at the bottom-center position.
+ *
+ * @warning The eye and mouth states does not and will not provide frame-reentrant guarantee.
  */
 class Stand : public UpdatedByFrame {
 public:
@@ -218,17 +232,24 @@ public:
    * @brief Loads stand CG resources from @p dir, @p pose and @p expression.
    *
    * @param dir Resource root dir.
-   * @param pose Pose name.
-   * @param expression Expression name.
+   * @param character Character file string.
+   * @param pose Character pose string.
+   * @param expression Expression string.
    * @param mul Size multiplier.
-   * @param speaking Duration the character is sleeping.
-   * @param flip Whether the CG should be flipped in X direction.
+   * @param speaking Duration for which the character is speaking.
+   * @param flip Whether the CG should be flipped in X (horizontal) direction.
    *
    * @warning There is no user-defined path name pattern specification for the time being.
    * Maybe more flexible method will be added.
    */
-  Stand(const std::string& dir, const std::string& pose, const std::string& expression,
-        unsigned int mul, Frames speaking = 0_fr, bool flip = false);
+  Stand(const std::string& dir,
+        const std::string& character,
+        const std::string& pose,
+        const std::string& expression,
+        int mul,
+        Frames speaking = 0_fr,
+        std::shared_ptr<StatusSelector> eyeCD = nullptr,
+        bool flip = false);
 
   ~Stand() override;
   Frames duration() const override;
@@ -241,21 +262,13 @@ public:
   /// @brief Sets the stand will speak for @p frames.
   void setSpeakingDuration(Frames duration);
 
-  /// @brief Binds it to an external @p countDown variable.
-  void bindEyeStatus(Frames* countDown);
-
-  /// @brief Refreshes a blink countdown, i.e., to re-generate a countdown.
-  static void refreshEyeBlinkCountDown(Frames* countDown);
-
 private:
-  Image image;
-  Image eye[4];
-  Image mouth[3];
-  Frames speaking;
+  Image image; // body picture
+  std::vector<Image> eye; // eye pictures
+  std::vector<Image> mouth; // mouth pictures
   // for next frame
-  Frames* eyeBlinkCountDown; // (external)
-  std::uint8_t eyeStatus; // eye status
-  std::uint8_t mouthStatus; // mouth status
+  std::shared_ptr<StatusSelector> eyeSelector; // eye status
+  std::shared_ptr<StatusSelector> mouthSelector; // mouth status
 };
 
 /**

@@ -9,8 +9,9 @@
 #define DIALOGVIDEOGENERATOR_TIME_UTILS_H
 
 #include <chrono>
-#include <dialog_video_generator/common.h>
 #include <common613/vector_definitions.h>
+#include <dialog_video_generator/common.h>
+#include <dialog_video_generator/config.h>
 
 namespace dialog_video_generator { namespace time {
 
@@ -18,6 +19,7 @@ namespace dialog_video_generator { namespace time {
 struct Frames : common613::ArrNi<true, std::size_t, 1> {
   constexpr Frames(const Frames& other) = default; // prevents resolution issue when copied.
   constexpr Frames(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)
+  constexpr explicit operator bool() const { return arr[0] != 0; }
   template <class NumT>
   constexpr static Frames of(NumT num) { return Frames{ArrNi::of(num)}; }
 };

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/cuda/cuda_utils.h>
+#include <dialog_video_generator/config.h>
 
 namespace dialog_video_generator { namespace cuda {
 

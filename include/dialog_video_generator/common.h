@@ -19,18 +19,6 @@ namespace dialog_video_generator {
 using namespace std::literals;
 using common613::checked_cast;
 
-namespace config {
-/// @{
-/// @brief Video parameter.
-extern std::uint16_t FRAMES_PER_SECOND;
-extern std::uint16_t WIDTH, HEIGHT;
-/// @}
-/// @{
-/// @brief Hardware parameter. Limits usage if necessary.
-extern std::uint16_t GPU_MAX_THREAD_PER_BLOCK, CPU_THREADS_NUM;
-/// @}
-};
-
 /// @brief Global initialization. Loads configures, setting up logging, and so on.
 void init();
 

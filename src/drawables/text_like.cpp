@@ -11,7 +11,7 @@ using namespace common613;
 namespace dialog_video_generator { namespace drawable {
 
 TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorType,
-                   size_t start, size_t speedNum, size_t speedDen)
+                   std::size_t start, std::size_t speedNum, std::size_t speedDen, std::size_t fontIndex)
     : size(sz), start(start), current(start), speedNum(speedNum), speedDen(speedDen), colorType(colorType), glyphs() {
   tiny_utf8::string buffer(content);
 
@@ -21,7 +21,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
       offsetInTextBox.x() = 0;
       offsetInTextBox.y() += 64;
     } else {
-      FT_GlyphSlot slot = font::loadGlyph(font::faceForChineseText, c);
+      FT_GlyphSlot slot = font::loadGlyph(fontIndex, c);
       assert(slot->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
       const Size glyphSize = Size::of(slot->bitmap.rows, slot->bitmap.width);
       if (glyphSize.total() == 0) {

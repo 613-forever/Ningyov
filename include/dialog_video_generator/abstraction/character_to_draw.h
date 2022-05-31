@@ -14,7 +14,7 @@ class CharacterToDraw : public Character, public Drawable {
 public:
   CharacterToDraw(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson = false);
   CharacterToDraw(const std::string& dialogDir, const std::string& dialogFormat,
-                  const std::string& standRootDir, const std::string& poseFormat, const std::string& exprFormat,
+                  const std::string& standRootDir, const std::string& characterString,
                   Vec2i bottomCenterOffset, bool firstPerson = false, bool drawStand = true);
   ~CharacterToDraw() override;
   Frames duration() const override;

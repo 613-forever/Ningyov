@@ -5,6 +5,9 @@
 
 #include <dialog_video_generator/abstraction/action_animations.h>
 #include <dialog_video_generator/abstraction/dialog.h>
+#include <dialog_video_generator/drawables/stand.h>
+
+#include <utility>
 
 using namespace dialog_video_generator::drawable;
 
@@ -15,21 +18,24 @@ std::uint16_t STAND_MULTIPLIER = 4;
 
 namespace abstraction {
 
-Character::Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson /* = false */) :
+Character::Character(std::string dialogDir, std::string dialogFormat, bool firstPerson /* = false */) :
     hasStandToDraw(false), drawStand(false), isFirstPerson(firstPerson), eyeBinder{0_fr},
     action{}, actionAnimated{true}, offset{},
-    dlgDir(dialogDir), dlgFmt(dialogFormat), poseFmt{}, exprFmt{} {
+    dlgDir(std::move(dialogDir)), dlgFmt(std::move(dialogFormat)) {
   clearDialogResources(isFirstPerson);
 }
 
-Character::Character(const std::string& dialogDir, const std::string& dialogFormat,
-                     const std::string& standRootDir, const std::string& poseFormat, const std::string& exprFormat,
+Character::Character(std::string dialogDir, std::string dialogFormat,
+                     std::string standRootDir, std::string characterString,
                      Vec2i bottomCenterOffset, bool firstPerson /* = isFalse */, bool drawStand /* = true */) :
     hasStandToDraw(true), drawStand(drawStand), isFirstPerson(firstPerson), eyeBinder{0_fr},
     action{Action::NORMAL}, actionAnimated{true}, offset{bottomCenterOffset},
-    dlgDir(dialogDir), dlgFmt(dialogFormat), standDir(standRootDir), poseFmt(poseFormat), exprFmt(exprFormat) {
+    dlgDir(std::move(dialogDir)), dlgFmt(std::move(dialogFormat)),
+    standDir(std::move(standRootDir)), charStr(std::move(characterString)) {
   clearDialogResources(isFirstPerson);
-  initEyeBinder();
+  // initEyeBinder();
+  blinkSelector = std::make_shared<BlinkSelector>(&eyeBinder);
+  BlinkSelector::reset(blinkSelector.get());
 }
 
 Character::~Character() = default;
@@ -49,10 +55,6 @@ void Character::clearDialogResources(bool firstPerson) {
   shoutingDialog = nullptr;
   murmuringDialog = nullptr;
   isFirstPerson = firstPerson;
-}
-
-void Character::initEyeBinder() {
-  Stand::refreshEyeBlinkCountDown(&eyeBinder);
 }
 
 std::shared_ptr<Texture> Character::getNormalDialog() {
@@ -95,16 +97,15 @@ void Character::keepsAllInNextShot() {
 void Character::changesExprInNextShot(const std::string& pose, const std::string& expression, bool flip/* = false*/) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
   stand = std::make_shared<Stand>(
-      standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
-      config::STAND_MULTIPLIER, 0_fr, flip
+      standDir, charStr, pose, expression,
+      config::STAND_MULTIPLIER, 0_fr, blinkSelector, flip
   );
-  stand->bindEyeStatus(&eyeBinder);
   actionAnimated = true;
 }
 
 void Character::movesInNextShot(const std::string& pose, const std::string& expression, Vec2i newOffset) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without stand CG.");
-  // TODO: move animation
+  // TODO: movement animation
 }
 
 void Character::speaksInNextShot(const std::shared_ptr<drawable::TextLike>& lines, Action newAction/*= NORMAL*/,
@@ -125,10 +126,9 @@ void Character::speaksAndChangesExprInNextShot(const std::shared_ptr<drawable::T
                                                bool addMouthAnimation/* = true*/) {
   COMMON613_REQUIRE(hasStandToDraw, "Setting stand information for a character without any stand CG.");
   stand = std::make_shared<Stand>(
-      standDir, fmt::format(poseFmt, pose), fmt::format(exprFmt, expression),
-      config::STAND_MULTIPLIER, addMouthAnimation ? lines->duration() : 0_fr, flip
+      standDir, charStr, pose, expression,
+      config::STAND_MULTIPLIER, addMouthAnimation ? lines->duration() : 0_fr, blinkSelector, flip
   );
-  stand->bindEyeStatus(&eyeBinder);
   setAction(newAction);
 }
 

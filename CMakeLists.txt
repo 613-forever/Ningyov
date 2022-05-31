@@ -48,7 +48,7 @@ if (MSVC)
 endif (MSVC)
 
 set(${PROJECT_NAME}_HEADERS
-        common.h # common
+        common.h config.h # common
         math/pos_utils.h math/pos_arith.h # pos utils
         math/random_utils.h # random utils
         cuda/cuda_utils.h # cuda support
@@ -61,7 +61,7 @@ set(${PROJECT_NAME}_HEADERS
         )
 
 set(${PROJECT_NAME}_SOURCES
-        common.cpp
+        common.cpp config.cpp
         utils/random_utils.cpp
         cuda/cuda_utils.cpp cuda/cuda_images.cu
         utils/text_render_utils.cpp

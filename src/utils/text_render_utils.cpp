@@ -1,17 +1,21 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/text/text_render_details.h>
 
-namespace dialog_video_generator { namespace font {
+namespace dialog_video_generator { namespace config {
+std::string FONT_DIRECTORY("./");
+std::vector<font::FontInfo> FONT_NAMES_AND_SIZES{
+    {"SourceHanSansJP-Regular.otf", 48, 48},
+};
+}
+
+namespace font {
 
 Library library{};
-Face faceForChineseText{};
-Face faceForJapaneseText{};
+std::vector<Face> faces;
 
-void init(const std::string& fontDir,
-          const std::string& fontNameForChinese,
-          const std::string& fontNameForJapanese) {
+void init() {
   BOOST_LOG_TRIVIAL(trace) << "Initializing FreeType...";
   FT_Library pLibrary;
   if (auto error = FT_Init_FreeType(&pLibrary)) {
@@ -19,12 +23,12 @@ void init(const std::string& fontDir,
   }
   library.reset(pLibrary);
 
-  faceForChineseText = openFace(fontDir + fontNameForChinese);
+  for (auto& info : config::FONT_NAMES_AND_SIZES) {
+    Face face = openFace(config::FONT_DIRECTORY + info.filename);
 //  FT_Set_Char_Size(faceForChineseText.get(), 0, 54 * 64, 72, 72);
-  FT_Set_Pixel_Sizes(faceForChineseText.get(), 48, 48);
-  faceForJapaneseText = openFace(fontDir + fontNameForJapanese);
-//  FT_Set_Char_Size(faceForJapaneseText.get(), 0, 54 * 64, 72, 72);
-  FT_Set_Pixel_Sizes(faceForJapaneseText.get(), 48, 48);
+    FT_Set_Pixel_Sizes(face.get(), info.pixelWidth, info.pixelHeight);
+    faces.emplace_back(std::move(face));
+  }
 }
 
 Face openFace(const std::string& filePathname) {
@@ -42,14 +46,22 @@ Face openFace(const std::string& filePathname) {
   return Face(face);
 }
 
-FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint) {
-  auto glyphIndex = FT_Get_Char_Index(face.get(), codePoint);
-  FT_Load_Glyph(face.get(), glyphIndex, FT_LOAD_DEFAULT);
+FT_GlyphSlot loadGlyph(FT_Face face, char32_t codePoint) {
+  auto glyphIndex = FT_Get_Char_Index(face, codePoint);
+  FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
   if (face->glyph->format != FT_GLYPH_FORMAT_BITMAP) {
     FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
   }
   assert(face->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY);
   return face->glyph;
+}
+
+FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint) {
+  return loadGlyph(face.get(), codePoint);
+}
+
+FT_GlyphSlot loadGlyph(std::size_t index, char32_t codePoint) {
+  return loadGlyph(faces[index].get(), codePoint);
 }
 
 } }

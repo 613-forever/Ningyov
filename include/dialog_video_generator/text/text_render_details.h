@@ -13,7 +13,7 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include <common613/assert.h>
-#include <dialog_video_generator/text/text_render_details.h>
+#include <dialog_video_generator/text/text_render_utils.h>
 
 namespace dialog_video_generator { namespace font {
 
@@ -40,22 +40,17 @@ struct GlyphCloser {
 using Glyph = std::unique_ptr<std::remove_pointer_t<FT_Glyph>, GlyphCloser>;
 
 /// @cond
-struct FaceCloser {
-  void operator()(FT_Face face) {
-//    BOOST_LOG_TRIVIAL(trace) << "Releasing a typeface @" << (void*)face; // Global variable release.
-    FT_Done_Face(face);
-  }
-};
+inline void FaceCloser::operator()(FT_FaceRec* face) {
+  FT_Done_Face(face);
+}
 /// @endcond
-/// @brief Auto releasing @c FT_Face.
-using Face = std::unique_ptr<std::remove_pointer_t<FT_Face>, FaceCloser>;
 /// @brief Opens a font face with specified @p filePathname.
 Face openFace(const std::string& filePathname);
-extern Face faceForChineseText;
-extern Face faceForJapaneseText;
 
 /// @brief Accesses @c FT_GlyphSlot directly.
+FT_GlyphSlot loadGlyph(FT_Face face, char32_t codePoint);
 FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint);
+FT_GlyphSlot loadGlyph(std::size_t faceIndex, char32_t codePoint);
 
 } }
 

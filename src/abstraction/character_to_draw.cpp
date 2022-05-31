@@ -10,11 +10,10 @@ CharacterToDraw::CharacterToDraw(const std::string& dialogDir, const std::string
     : Character(dialogDir, dialogFormat, firstPerson) {}
 
 CharacterToDraw::CharacterToDraw(const std::string& dialogDir, const std::string& dialogFormat,
-                                 const std::string& standRootDir,
-                                 const std::string& poseFormat, const std::string& exprFormat,
+                                 const std::string& standRootDir, const std::string& characterString,
                                  Vec2i bottomCenterOffset, bool firstPerson, bool drawStand)
     : Character(dialogDir, dialogFormat,
-                standRootDir, poseFormat, exprFormat,
+                standRootDir, characterString,
                 bottomCenterOffset, firstPerson, drawStand) {}
 
 CharacterToDraw::~CharacterToDraw() = default;

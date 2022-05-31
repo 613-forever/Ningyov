@@ -18,6 +18,7 @@ class Drawable;
 class Texture;
 class Stand;
 class TextLike;
+class BlinkSelector;
 }
 
 namespace config {
@@ -50,10 +51,10 @@ public:
   static constexpr const char* const FIRST_PERSON = "_1st";
 
   /// @brief Constructor for non-display character.
-  Character(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson = false);
+  Character(std::string  dialogDir, std::string  dialogFormat, bool firstPerson = false);
   /// @brief Constructor for display character. Use CharacterToDraw instead if you want to use it as a @c Drawable.
-  Character(const std::string& dialogDir, const std::string& dialogFormat,
-            const std::string& standRootDir, const std::string& poseFormat, const std::string& exprFormat,
+  Character(std::string  dialogDir, std::string  dialogFormat,
+            std::string  standRootDir, std::string  characterString,
             Vec2i bottomCenterOffset, bool firstPerson = false, bool drawStand = true);
   ~Character();
 
@@ -63,7 +64,6 @@ private:
   void clearDialogResourcesIfChanged(bool firstPerson) {
     if (firstPerson != isFirstPerson) clearDialogResources(firstPerson);
   }
-  void initEyeBinder();
 
   std::shared_ptr<drawable::Texture> getNormalDialog();
   std::shared_ptr<drawable::Texture> getThinkingDialog();
@@ -102,7 +102,8 @@ private:
   bool hasStandToDraw, drawStand;
   bool isFirstPerson;
   Frames eyeBinder;
-  std::string dlgDir, standDir, dlgFmt;
+  std::shared_ptr<drawable::BlinkSelector> blinkSelector;
+  std::string dlgDir, standDir, dlgFmt, charStr;
   // unlikely to change ( changes only when first-person changes )
   std::shared_ptr<drawable::Texture> dialog, thinkingDialog, shoutingDialog, murmuringDialog;
   std::shared_ptr<drawable::Stand> stand{};
@@ -110,7 +111,6 @@ private:
   Action action;
   bool actionAnimated; // true: depress action animation. useful when the shot follows another which has animated it.
   Vec2i offset;
-  std::string poseFmt, exprFmt;
 };
 
 } }
