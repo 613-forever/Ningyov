@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawable.h>
-#include <dialog_video_generator/drawables/stand.h>
+#include <ningyov/drawable.h>
+#include <ningyov/drawables/stand.h>
 
 #include <cctype>
 #include <random>
 #include <common613/file_utils.h>
-#include <dialog_video_generator/math/pos_arith.h>
-#include <dialog_video_generator/math/random_utils.h>
+#include <ningyov/math/pos_arith.h>
+#include <ningyov/math/random_utils.h>
 
 using namespace common613;
 using namespace fmt::literals;
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace config {
 
 std::string STAND_POSE_STRING_FORMAT("talkchara{char}_{pose}");

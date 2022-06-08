@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/abstraction/action_animations.h>
+#include <ningyov/abstraction/action_animations.h>
 
-#include <dialog_video_generator/math/pos_arith.h>
+#include <ningyov/math/pos_arith.h>
 
 using common613::checked_cast;
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 Shouting::Shouting(std::shared_ptr<Drawable> target)
     : Movement(std::move(target), time::seconds(LENGTH_SECOND)) {}

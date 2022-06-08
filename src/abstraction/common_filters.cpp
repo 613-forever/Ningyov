@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/abstraction/common_filters.h>
+#include <ningyov/abstraction/common_filters.h>
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 BlackAndWhiteFilter::BlackAndWhiteFilter() : LinearFilter(filterData) {}
 

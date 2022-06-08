@@ -4,15 +4,15 @@
 /// @file
 /// @brief Abstraction for characters.
 
-#ifndef DIALOGVIDEOGENERATOR_CHARACTER_H
-#define DIALOGVIDEOGENERATOR_CHARACTER_H
+#ifndef NINGYOV_CHARACTER_H
+#define NINGYOV_CHARACTER_H
 
 #include <memory>
 #include <cstdint>
-#include <dialog_video_generator/math/pos_utils.h>
-#include <dialog_video_generator/math/time_utils.h>
+#include <ningyov/math/pos_utils.h>
+#include <ningyov/math/time_utils.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace drawable {
 class Drawable;
 class Texture;
@@ -115,4 +115,4 @@ private:
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_CHARACTER_H
+#endif //NINGYOV_CHARACTER_H

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/text/text_render_details.h>
+#include <ningyov/text/text_render_details.h>
 
-namespace dialog_video_generator { namespace config {
+namespace ningyov { namespace config {
 std::string FONT_DIRECTORY("./");
 std::vector<font::FontInfo> FONT_NAMES_AND_SIZES{
     {"SourceHanSansJP-Regular.otf", 48, 48},

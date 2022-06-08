@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/abstraction/character_to_draw.h>
+#include <ningyov/abstraction/character_to_draw.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace abstraction {
 
 CharacterToDraw::CharacterToDraw(const std::string& dialogDir, const std::string& dialogFormat, bool firstPerson)

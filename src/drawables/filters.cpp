@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawables/filters.h>
+#include <ningyov/drawables/filters.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 Filter::~Filter() = default;
 

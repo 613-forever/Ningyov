@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/common.h>
+#include <ningyov/common.h>
 
 #include <iostream>
 #include <iomanip>
@@ -13,7 +13,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-#include <dialog_video_generator/config.h>
+#include <ningyov/config.h>
 
 #ifdef _MSC_VER
 #include <fcntl.h>
@@ -21,7 +21,7 @@
 #include <common613/assert.h>
 #endif
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 namespace config {
 }

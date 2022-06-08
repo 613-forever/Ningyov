@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/abstraction/character.h>
+#include <ningyov/abstraction/character.h>
 
-#include <dialog_video_generator/abstraction/action_animations.h>
-#include <dialog_video_generator/abstraction/dialog.h>
-#include <dialog_video_generator/drawables/stand.h>
+#include <ningyov/abstraction/action_animations.h>
+#include <ningyov/abstraction/dialog.h>
+#include <ningyov/drawables/stand.h>
 
 #include <utility>
 
-using namespace dialog_video_generator::drawable;
+using namespace ningyov::drawable;
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace config {
 std::uint16_t STAND_MULTIPLIER = 4;
 }

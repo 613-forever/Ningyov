@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef NINGYOV_ENABLE_SAVE_VIDEO_IPC_STRATEGY
 
 #include <algorithm> // "process.hpp" will trigger "std::transform" not find without this on Ubuntu16.04/boost1.76.
 #include <boost/process.hpp> // must be above engine on Windows, to avoid C1189: including "WinSock.h" repeatedly.
-#include <dialog_video_generator/engine.h> // target header
+#include <ningyov/engine.h> // target header
 
 #include <common613/compat/file_system.h>
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace engine {
+namespace ningyov { namespace engine {
 
 struct Engine::ChildProcVideo::State {
   boost::process::child childProcess;

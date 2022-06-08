@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file
 /// @brief Images, abstraction for images on GPU.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_IMAGE_H
-#define DIALOGVIDEOGENERATOR_IMAGE_H
+#ifndef NINGYOV_IMAGE_H
+#define NINGYOV_IMAGE_H
 
 #include <string>
 #include <unordered_map>
 #include <atomic>
 #include <iosfwd>
-#include <dialog_video_generator/cuda/cuda_utils.h>
-#include <dialog_video_generator/math/pos_utils.h>
+#include <ningyov/cuda/cuda_utils.h>
+#include <ningyov/math/pos_utils.h>
 
 /// @cond
 // Forward declarations for png-related, to avoid including png++ headers here.
@@ -30,7 +30,7 @@ class image;
 }
 /// @endcond
 
-namespace dialog_video_generator { namespace image {
+namespace ningyov { namespace image {
 
 /**
  * @class RawImage3
@@ -155,4 +155,4 @@ using image::ColorImage;
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_IMAGE_H
+#endif //NINGYOV_IMAGE_H

@@ -5,12 +5,12 @@
 /// @brief Animations with alpha changing, derivation classes of @ref AlphaChange .
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_ALPHA_CHANGES_H
-#define DIALOGVIDEOGENERATOR_ALPHA_CHANGES_H
+#ifndef NINGYOV_ALPHA_CHANGES_H
+#define NINGYOV_ALPHA_CHANGES_H
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 /**
  * @brief Linear fade-in animation.
@@ -34,4 +34,4 @@ public:
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_ALPHA_CHANGES_H
+#endif //NINGYOV_ALPHA_CHANGES_H

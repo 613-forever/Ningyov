@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_COMMON_FILTERS_H
-#define DIALOGVIDEOGENERATOR_COMMON_FILTERS_H
+#ifndef NINGYOV_COMMON_FILTERS_H
+#define NINGYOV_COMMON_FILTERS_H
 
-#include <dialog_video_generator/drawables/filters.h>
+#include <ningyov/drawables/filters.h>
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 class BlackAndWhiteFilter : public drawable::LinearFilter {
   static std::int8_t filterData[12];
@@ -29,4 +29,4 @@ public:
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_COMMON_FILTERS_H
+#endif //NINGYOV_COMMON_FILTERS_H

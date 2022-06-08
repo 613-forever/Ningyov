@@ -5,16 +5,16 @@
 /// @brief Header file for global random generator.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_RANDOM_UTILS_H
-#define DIALOGVIDEOGENERATOR_RANDOM_UTILS_H
+#ifndef NINGYOV_RANDOM_UTILS_H
+#define NINGYOV_RANDOM_UTILS_H
 
 #include <random>
 
-namespace dialog_video_generator { namespace random {
+namespace ningyov { namespace random {
 
 /// @brief Global random generator.
 extern std::mt19937_64 gen;
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_RANDOM_UTILS_H
+#endif //NINGYOV_RANDOM_UTILS_H

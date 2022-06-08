@@ -5,13 +5,13 @@
 /// @brief Types about @ref Drawable.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_DRAWABLE_H
-#define DIALOGVIDEOGENERATOR_DRAWABLE_H
+#ifndef NINGYOV_DRAWABLE_H
+#define NINGYOV_DRAWABLE_H
 
-#include <dialog_video_generator/image.h>
-#include <dialog_video_generator/math/time_utils.h>
+#include <ningyov/image.h>
+#include <ningyov/math/time_utils.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace drawable {
 
 /**
@@ -375,4 +375,4 @@ using drawable::Drawable;
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_DRAWABLE_H
+#endif //NINGYOV_DRAWABLE_H

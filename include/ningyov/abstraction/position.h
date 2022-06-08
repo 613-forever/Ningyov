@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#ifndef DIALOGVIDEOGENERATOR_POSITION_H
-#define DIALOGVIDEOGENERATOR_POSITION_H
+#ifndef NINGYOV_POSITION_H
+#define NINGYOV_POSITION_H
 
-#include <dialog_video_generator/common.h>
-#include <dialog_video_generator/math/pos_utils.h>
+#include <ningyov/common.h>
+#include <ningyov/math/pos_utils.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace position {
 
 constexpr const int POSITION_BASE_LEFT_SHIFT = 6;
@@ -41,4 +41,4 @@ using position::enumToPosition; // use Pos2i to specify non-semantic positions.
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_POSITION_H
+#endif //NINGYOV_POSITION_H

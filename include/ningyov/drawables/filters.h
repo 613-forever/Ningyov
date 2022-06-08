@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 /// @file
 /// @brief Utils for filter drawables.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_FILTERS_H
-#define DIALOGVIDEOGENERATOR_FILTERS_H
+#ifndef NINGYOV_FILTERS_H
+#define NINGYOV_FILTERS_H
 
-#include <dialog_video_generator/drawable.h>
-#include <dialog_video_generator/cuda/cuda_utils.h>
+#include <ningyov/drawable.h>
+#include <ningyov/cuda/cuda_utils.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 /**
  * @brief Base class for filters.
@@ -48,4 +48,4 @@ private:
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_FILTERS_H
+#endif //NINGYOV_FILTERS_H

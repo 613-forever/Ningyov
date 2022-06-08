@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
 #include <tinyutf8/tinyutf8.h>
-#include <dialog_video_generator/text/text_render_details.h>
+#include <ningyov/text/text_render_details.h>
 
 using namespace common613;
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorType,
                    std::size_t start, std::size_t speedNum, std::size_t speedDen, std::size_t fontIndex)

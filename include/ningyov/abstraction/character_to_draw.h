@@ -2,13 +2,13 @@
 // Copyright (c) 2021-2022 613_forever
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_CHARACTER_TO_DRAW_H
-#define DIALOGVIDEOGENERATOR_CHARACTER_TO_DRAW_H
+#ifndef NINGYOV_CHARACTER_TO_DRAW_H
+#define NINGYOV_CHARACTER_TO_DRAW_H
 
-#include <dialog_video_generator/abstraction/character.h>
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/abstraction/character.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 class CharacterToDraw : public Character, public Drawable {
 public:
@@ -42,4 +42,4 @@ private:
 
 }}
 
-#endif //DIALOGVIDEOGENERATOR_CHARACTER_TO_DRAW_H
+#endif //NINGYOV_CHARACTER_TO_DRAW_H

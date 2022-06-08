@@ -5,12 +5,12 @@
 /// @brief Animations with position changing, derivation classes of @ref Movement .
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_MOVEMENTS_H
-#define DIALOGVIDEOGENERATOR_MOVEMENTS_H
+#ifndef NINGYOV_MOVEMENTS_H
+#define NINGYOV_MOVEMENTS_H
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 /**
  * @brief Simple movement.
@@ -77,4 +77,4 @@ private:
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_MOVEMENTS_H
+#endif //NINGYOV_MOVEMENTS_H

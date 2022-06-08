@@ -5,8 +5,8 @@
 /// @brief Font-related function isolated from the library @c FreeType.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_TEXT_RENDER_UTILS_H
-#define DIALOGVIDEOGENERATOR_TEXT_RENDER_UTILS_H
+#ifndef NINGYOV_TEXT_RENDER_UTILS_H
+#define NINGYOV_TEXT_RENDER_UTILS_H
 
 #include <string>
 #include <vector>
@@ -15,7 +15,7 @@
 
 struct FT_FaceRec_; // exposed from Freetype.
 
-namespace dialog_video_generator { namespace font {
+namespace ningyov { namespace font {
 
 /// @cond
 struct FaceCloser {
@@ -42,4 +42,4 @@ extern std::vector<font::FontInfo> FONT_NAMES_AND_SIZES;
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_TEXT_RENDER_UTILS_H
+#endif //NINGYOV_TEXT_RENDER_UTILS_H

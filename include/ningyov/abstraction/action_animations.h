@@ -5,12 +5,12 @@
 /// @brief Implementations for animations in actions.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
-#define DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
+#ifndef NINGYOV_ACTION_ANIMATIONS_H
+#define NINGYOV_ACTION_ANIMATIONS_H
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 /**
  * @brief Animation in shouting actions.
@@ -58,4 +58,4 @@ inline std::shared_ptr<Murmuring> animateMurmuring(std::shared_ptr<Drawable> tar
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_ACTION_ANIMATIONS_H
+#endif //NINGYOV_ACTION_ANIMATIONS_H

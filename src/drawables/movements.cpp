@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawables/movements.h>
+#include <ningyov/drawables/movements.h>
 
-#include <dialog_video_generator/math/pos_arith.h>
+#include <ningyov/math/pos_arith.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 SimpleMovement::SimpleMovement(std::shared_ptr<Drawable> target, Vec2i startOffset, Vec2i endOffset, Frames dur)
     : Movement(std::move(target), dur), start(startOffset), end(endOffset) {}

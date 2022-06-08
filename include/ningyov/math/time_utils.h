@@ -5,15 +5,15 @@
 /// @brief Utils about time point and durations by the frame.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_TIME_UTILS_H
-#define DIALOGVIDEOGENERATOR_TIME_UTILS_H
+#ifndef NINGYOV_TIME_UTILS_H
+#define NINGYOV_TIME_UTILS_H
 
 #include <chrono>
 #include <common613/vector_definitions.h>
-#include <dialog_video_generator/common.h>
-#include <dialog_video_generator/config.h>
+#include <ningyov/common.h>
+#include <ningyov/config.h>
 
-namespace dialog_video_generator { namespace time {
+namespace ningyov { namespace time {
 
 /// @brief Wrapper for frame count as time unit, to avoid logic bugs.
 struct Frames : common613::ArrNi<true, std::size_t, 1> {
@@ -71,4 +71,4 @@ inline Frames operator ""_min(long double i) {
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_TIME_UTILS_H
+#endif //NINGYOV_TIME_UTILS_H

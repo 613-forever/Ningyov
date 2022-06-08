@@ -6,16 +6,16 @@
 /// @note Use @ref text_render_utils.h if possible, to isolate @c FreeType from other codes.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_TEXT_RENDER_DETAILS_H
-#define DIALOGVIDEOGENERATOR_TEXT_RENDER_DETAILS_H
+#ifndef NINGYOV_TEXT_RENDER_DETAILS_H
+#define NINGYOV_TEXT_RENDER_DETAILS_H
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include <common613/assert.h>
-#include <dialog_video_generator/text/text_render_utils.h>
+#include <ningyov/text/text_render_utils.h>
 
-namespace dialog_video_generator { namespace font {
+namespace ningyov { namespace font {
 
 /// @cond
 struct LibraryCloser {
@@ -56,4 +56,4 @@ int getTopToBaseInline(std::size_t index);
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_TEXT_RENDER_DETAILS_H
+#endif //NINGYOV_TEXT_RENDER_DETAILS_H

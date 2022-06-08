@@ -6,14 +6,14 @@
 /// @note Use @ref pos_utils.h instead if possible.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_POS_ARITH_H
-#define DIALOGVIDEOGENERATOR_POS_ARITH_H
+#ifndef NINGYOV_POS_ARITH_H
+#define NINGYOV_POS_ARITH_H
 
 #include <common613/vector_arith_utils.h>
 #include <common613/compat/cpp17.h>
-#include <dialog_video_generator/math/pos_utils.h>
+#include <ningyov/math/pos_utils.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 /// @brief Linear interpolation.
 template <class Val, class IntT>
@@ -56,4 +56,4 @@ inline bool anyIntersect(const std::vector<Range>& rs, Range range) {
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_POS_ARITH_H
+#endif //NINGYOV_POS_ARITH_H

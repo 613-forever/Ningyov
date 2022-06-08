@@ -1,8 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.17)
 
-project("DialogVideoGenerator"
-        VERSION 1.1.0
-        DESCRIPTION "Dialog video/picture generator"
+project("Ningyov"
+        DESCRIPTION "A dialog video generator with standing drawings."
         LANGUAGES CXX CUDA
         )
 
@@ -36,9 +35,9 @@ find_package(fmt REQUIRED)
 
 find_package(Freetype REQUIRED)
 
-if (NOT DIALOG_VIDEO_GENERATOR_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
+if (NOT NINGYOV_DISABLE_SAVE_VIDEO_IPC_STRATEGY)
 #    find_package(Boost REQUIRED COMPONENTS headers) # process
-    add_definitions(-DDIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
+    add_definitions(-DNINGYOV_ENABLE_SAVE_VIDEO_IPC_STRATEGY)
     link_libraries(Boost::headers)
 endif ()
 if (MSVC)
@@ -88,9 +87,9 @@ set(${PROJECT_NAME}_FACADE_SOURCES
 #        abstraction/director.cpp
         )
 
-list(TRANSFORM ${PROJECT_NAME}_HEADERS PREPEND "include/dialog_video_generator/" OUTPUT_VARIABLE ${PROJECT_NAME}_HEADERS_RELATIVE)
+list(TRANSFORM ${PROJECT_NAME}_HEADERS PREPEND "include/ningyov/" OUTPUT_VARIABLE ${PROJECT_NAME}_HEADERS_RELATIVE)
 list(TRANSFORM ${PROJECT_NAME}_SOURCES PREPEND "src/" OUTPUT_VARIABLE ${PROJECT_NAME}_SOURCES_RELATIVE)
-list(TRANSFORM ${PROJECT_NAME}_FACADE_HEADERS PREPEND "include/dialog_video_generator/" OUTPUT_VARIABLE ${PROJECT_NAME}_FACADE_HEADERS_RELATIVE)
+list(TRANSFORM ${PROJECT_NAME}_FACADE_HEADERS PREPEND "include/ningyov/" OUTPUT_VARIABLE ${PROJECT_NAME}_FACADE_HEADERS_RELATIVE)
 list(TRANSFORM ${PROJECT_NAME}_FACADE_SOURCES PREPEND "src/" OUTPUT_VARIABLE ${PROJECT_NAME}_FACADE_SOURCES_RELATIVE)
 
 add_library(${PROJECT_NAME} STATIC
@@ -118,7 +117,7 @@ add_library(${PROJECT_NAME}_FACADE STATIC
         ${${PROJECT_NAME}_FACADE_HEADERS_RELATIVE} ${${PROJECT_NAME}_FACADE_SOURCES_RELATIVE})
 target_include_directories(
         ${PROJECT_NAME}_FACADE PUBLIC
-        $<BUILD_INTERFACE:${DialogVideoGenerator_SOURCE_DIR};${DialogVideoGenerator_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${Ningyov_SOURCE_DIR};${Ningyov_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_include_directories(${PROJECT_NAME}_FACADE PUBLIC

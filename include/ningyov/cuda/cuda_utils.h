@@ -5,14 +5,14 @@
 /// @brief Utils to use GPU to render images.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_CUDA_UTILS_H
-#define DIALOGVIDEOGENERATOR_CUDA_UTILS_H
+#ifndef NINGYOV_CUDA_UTILS_H
+#define NINGYOV_CUDA_UTILS_H
 
 #include <memory>
 #include <common613/memory.h>
-#include <dialog_video_generator/common.h>
+#include <ningyov/common.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 /// @brief Smart pointer to GPU memory. Only returned by @ref allocateMemory methods
 using CudaMemory = std::shared_ptr<unsigned char>;
@@ -107,4 +107,4 @@ void mergeGlyphMasks(unsigned char** pDst, const TextTask* pTask, std::size_t ta
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_CUDA_UTILS_H
+#endif //NINGYOV_CUDA_UTILS_H

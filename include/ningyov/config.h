@@ -4,13 +4,13 @@
 /// @file config.h
 /// @brief common configs
 
-#ifndef DIALOGVIDEOGENERATOR_CONFIG_H
-#define DIALOGVIDEOGENERATOR_CONFIG_H
+#ifndef NINGYOV_CONFIG_H
+#define NINGYOV_CONFIG_H
 
 #include <cstdint>
 #include <boost/log/trivial.hpp>
 
-namespace dialog_video_generator { namespace config {
+namespace ningyov { namespace config {
 /// @{
 /// @brief Video parameter.
 extern std::uint16_t FRAMES_PER_SECOND;
@@ -26,4 +26,4 @@ extern boost::log::trivial::severity_level LOG_LEVEL;
 void loadConfig();
 } }
 
-#endif //DIALOGVIDEOGENERATOR_CONFIG_H
+#endif //NINGYOV_CONFIG_H

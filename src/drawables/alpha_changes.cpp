@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawables/alpha_changes.h>
+#include <ningyov/drawables/alpha_changes.h>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 FadeIn::FadeIn(const std::shared_ptr<Drawable>& target, const Frames& duration)
 : AlphaChange(target, duration) {}

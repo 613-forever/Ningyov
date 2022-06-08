@@ -5,16 +5,16 @@
 /// @brief Rendering engine for a single act.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_ENGINE_H
-#define DIALOGVIDEOGENERATOR_ENGINE_H
+#ifndef NINGYOV_ENGINE_H
+#define NINGYOV_ENGINE_H
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <atomic>
-#include <dialog_video_generator/math/time_utils.h>
+#include <ningyov/math/time_utils.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 namespace drawable {
 class Drawable;
@@ -71,7 +71,7 @@ public:
 class Engine {
 public:
   using Strategies = std::vector<std::unique_ptr<Strategy>>;
-  friend class ::dialog_video_generator::abstraction::Director;
+  friend class ::ningyov::abstraction::Director;
 
   /**
    * @brief Constructs the engine.
@@ -156,7 +156,7 @@ public:
   private:
     std::string targetDir, format;
   };
-#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_STRATEGY
+#ifdef NINGYOV_ENABLE_SAVE_VIDEO_STRATEGY
   /// @brief Strategy saving the frame using FFMpeg.
   class SaveVideo: public Strategy {
   public:
@@ -172,7 +172,7 @@ public:
     std::string targetDir, name;
   };
 #endif
-#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_GPU_STRATEGY
+#ifdef NINGYOV_ENABLE_SAVE_VIDEO_GPU_STRATEGY
   /// @brief Strategy saving the frame using VideoCodec.
   class SaveVideoGPU : public Strategy {
   public:
@@ -196,7 +196,7 @@ public:
     void handleFrame(const Engine* engine, size_t index) override;
     void cleanup(const Engine* engine) override;
   };
-#ifdef DIALOGVIDEOGENERATOR_ENABLE_SAVE_VIDEO_IPC_STRATEGY
+#ifdef NINGYOV_ENABLE_SAVE_VIDEO_IPC_STRATEGY
   /// @brief Strategy starting a FFMpeg subprocess when initialized, and piping the frame into it.
   class ChildProcVideo : public Strategy {
   public:
@@ -220,4 +220,4 @@ using engine::Engine;
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_ENGINE_H
+#endif //NINGYOV_ENGINE_H

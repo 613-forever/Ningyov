@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/engine.h>
+#include <ningyov/engine.h>
 
 #include <memory>
 #include <thread>
 #include <png.hpp>
 #include <boost/filesystem.hpp>
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 #include <common613/vector_arith_utils.h>
 
-namespace dialog_video_generator { namespace engine {
+namespace ningyov { namespace engine {
 
 Strategy::~Strategy() = default;
 

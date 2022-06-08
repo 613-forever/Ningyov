@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/cuda/cuda_utils.h>
+#include <ningyov/cuda/cuda_utils.h>
 
 #include <cuda_runtime.h>
-#include <dialog_video_generator/config.h>
+#include <ningyov/config.h>
 
-namespace dialog_video_generator { namespace cuda {
+namespace ningyov { namespace cuda {
 
 void Closer::operator()(unsigned char* p) {
   BOOST_LOG_TRIVIAL(trace) << "Releasing CUDA memory @ " << (void*)(p);

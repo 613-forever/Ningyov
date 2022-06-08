@@ -2,12 +2,12 @@
 // Copyright (c) 2021-2022 613_forever
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_DIALOG_H
-#define DIALOGVIDEOGENERATOR_DIALOG_H
+#ifndef NINGYOV_DIALOG_H
+#define NINGYOV_DIALOG_H
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator { namespace abstraction {
+namespace ningyov { namespace abstraction {
 
 class Dialog : public Drawable {
 public:
@@ -30,4 +30,4 @@ inline std::shared_ptr<Dialog> makeDialog(const std::shared_ptr<drawable::Textur
 
 } }
 
-#endif //DIALOGVIDEOGENERATOR_DIALOG_H
+#endif //NINGYOV_DIALOG_H

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-#include <dialog_video_generator/math/pos_arith.h>
+#include <ningyov/math/pos_arith.h>
 #include <utility>
 
-namespace dialog_video_generator { namespace drawable {
+namespace ningyov { namespace drawable {
 
 Static::~Static() = default;
 

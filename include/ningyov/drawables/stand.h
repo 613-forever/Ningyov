@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#ifndef DIALOGVIDEOGENERATOR_STAND_H
-#define DIALOGVIDEOGENERATOR_STAND_H
+#ifndef NINGYOV_STAND_H
+#define NINGYOV_STAND_H
 
 #include <string>
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 namespace config {
 
 extern std::string STAND_POSE_STRING_FORMAT;
@@ -73,4 +73,4 @@ inline StatusSelector* defaultEyeSelector(Frames* countDown) {
 }
 }
 
-#endif //DIALOGVIDEOGENERATOR_STAND_H
+#endif //NINGYOV_STAND_H

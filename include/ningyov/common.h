@@ -5,8 +5,8 @@
 /// @brief Utils about common configurations.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_COMMON_H
-#define DIALOGVIDEOGENERATOR_COMMON_H
+#ifndef NINGYOV_COMMON_H
+#define NINGYOV_COMMON_H
 
 #include <string>
 #include <memory>
@@ -14,7 +14,7 @@
 #include <common613/assert.h>
 #include <common613/checked_cast.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 using namespace std::literals;
 using common613::checked_cast;
@@ -24,4 +24,4 @@ void init();
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_COMMON_H
+#endif //NINGYOV_COMMON_H

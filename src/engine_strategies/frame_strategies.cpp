@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/engine.h>
+#include <ningyov/engine.h>
 
 #include <common613/compat/file_system.h>
-#include <dialog_video_generator/drawable.h>
+#include <ningyov/drawable.h>
 
 using namespace common613::filesystem;
 
-namespace dialog_video_generator { namespace engine {
+namespace ningyov { namespace engine {
 
 Engine::SaveFrameByFrame::SaveFrameByFrame(std::string targetDir, std::string format)
     : targetDir(std::move(targetDir)), format(std::move(format)) {

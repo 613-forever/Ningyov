@@ -5,12 +5,12 @@
 /// @brief Utils about @ref Pos2i and @ref Vec2i.
 
 #pragma once
-#ifndef DIALOGVIDEOGENERATOR_POS_UTILS_H
-#define DIALOGVIDEOGENERATOR_POS_UTILS_H
+#ifndef NINGYOV_POS_UTILS_H
+#define NINGYOV_POS_UTILS_H
 
 #include <common613/vector_definitions.h>
 
-namespace dialog_video_generator {
+namespace ningyov {
 
 using Byte = std::uint8_t;
 using Dim = std::int16_t;
@@ -92,4 +92,4 @@ COMMON613_CHECK_BINARY_USABLE(Color4b);
 
 }
 
-#endif //DIALOGVIDEOGENERATOR_POS_UTILS_H
+#endif //NINGYOV_POS_UTILS_H

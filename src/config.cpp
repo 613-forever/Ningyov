@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/config.h>
+#include <ningyov/config.h>
 
 #include <unordered_map>
 #include <common613/file_utils.h>
-#include <dialog_video_generator/common.h>
+#include <ningyov/common.h>
 
-namespace dialog_video_generator { namespace config {
+namespace ningyov { namespace config {
 std::uint16_t FRAMES_PER_SECOND = 30;
 std::uint16_t WIDTH = 1920, HEIGHT = 1080;
 std::uint16_t GPU_MAX_THREAD_PER_BLOCK = 1024, CPU_THREAD_NUM = 4;
 boost::log::trivial::severity_level LOG_LEVEL = boost::log::trivial::info; // no header for this.
 } }
 
-#ifndef DIALOGVIDEOGENERATOR_SKIP_CUDA_CONFIGS
-#include <dialog_video_generator/cuda/cuda_utils.h>
+#ifndef NINGYOV_SKIP_CUDA_CONFIGS
+#include <ningyov/cuda/cuda_utils.h>
 #endif
-#ifndef DIALOGVIDEOGENERATOR_SKIP_STAND_CONFIGS
-#include <dialog_video_generator/drawables/stand.h>
+#ifndef NINGYOV_SKIP_STAND_CONFIGS
+#include <ningyov/drawables/stand.h>
 #endif
-#ifndef DIALOGVIDEOGENERATOR_SKIP_FONT_CONFIGS
-#include <dialog_video_generator/text/text_render_utils.h>
+#ifndef NINGYOV_SKIP_FONT_CONFIGS
+#include <ningyov/text/text_render_utils.h>
 #endif
 
-namespace dialog_video_generator { namespace config {
+namespace ningyov { namespace config {
 
 inline auto readInto(std::string& configItem) {
   return [&configItem](const char* str, const char* sentinel) {
@@ -56,11 +56,11 @@ void loadConfig() {
     boost::log::trivial::from_string(str, sentinel - str, config::LOG_LEVEL);
   };
 
-#ifndef DIALOGVIDEOGENERATOR_SKIP_CUDA_CONFIGS
+#ifndef NINGYOV_SKIP_CUDA_CONFIGS
   resolver["width_batches"] = readInto(config::WIDTH_BATCHES);
 #endif
 
-#ifndef DIALOGVIDEOGENERATOR_SKIP_STAND_CONFIGS
+#ifndef NINGYOV_SKIP_STAND_CONFIGS
   resolver["stand_pose_string_format"] = readInto(config::STAND_POSE_STRING_FORMAT);
   resolver["stand_pose_dir_format"] = readInto(config::STAND_POSE_DIR_FORMAT);
   resolver["stand_pose_file_format"] = readInto(config::STAND_POSE_FILE_FORMAT);
@@ -70,7 +70,7 @@ void loadConfig() {
   resolver["stand_expr_mouth_count"] = readInto(config::STAND_EXPR_MOUTH_COUNT);
 #endif
 
-#ifndef DIALOGVIDEOGENERATOR_SKIP_FONT_CONFIGS
+#ifndef NINGYOV_SKIP_FONT_CONFIGS
   resolver["font_dir"] = readInto(config::FONT_DIRECTORY);
   resolver["fonts"] = [](const char* str, const char* sentinel) {
     config::FONT_NAMES_AND_SIZES.clear();

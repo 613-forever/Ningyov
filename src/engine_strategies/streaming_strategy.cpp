@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/engine.h>
+#include <ningyov/engine.h>
 
-#include <dialog_video_generator/image.h>
+#include <ningyov/image.h>
 #include <iostream>
 
-namespace dialog_video_generator { namespace engine {
+namespace ningyov { namespace engine {
 
 Engine::StdoutStreaming::StdoutStreaming() {
   BOOST_LOG_TRIVIAL(info) << fmt::format("Frames will be dumped into stdout.");

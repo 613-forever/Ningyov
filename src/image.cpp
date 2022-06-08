@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021-2022 613_forever
 
-#include <dialog_video_generator/image.h>
+#include <ningyov/image.h>
 
 #include <memory>
 #include <thread>
@@ -10,7 +10,7 @@
 #include <png.hpp>
 #include <solid_pixel_buffer.hpp>
 
-namespace dialog_video_generator { namespace image {
+namespace ningyov { namespace image {
 
 std::unordered_map<std::string, RawImage> registeredImages(0x100); // NOLINT(cert-err58-cpp)
 
