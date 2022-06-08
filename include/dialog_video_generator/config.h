@@ -18,7 +18,7 @@ extern std::uint16_t WIDTH, HEIGHT;
 /// @}
 /// @{
 /// @brief Hardware parameter. Limits usage if necessary.
-extern std::uint16_t GPU_MAX_THREAD_PER_BLOCK, CPU_THREADS_NUM;
+extern std::uint16_t GPU_MAX_THREAD_PER_BLOCK, CPU_THREAD_NUM;
 /// @}
 /// @brief Log level.
 extern boost::log::trivial::severity_level LOG_LEVEL;

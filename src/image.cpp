@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/image.h>
 
@@ -91,7 +91,7 @@ void Image::addTask(Vec2i offset, bool withAlpha, unsigned int extraAlpha, bool 
       raw.size.h(), raw.size.w(),
       mul,
       extraAlpha,
-      withAlpha, false, false, extraAlpha < 16,
+      withAlpha, extraAlpha < 16,
       false, (this->flipX != flip), false, false,
       raw.memory.get(),
   });
@@ -104,7 +104,7 @@ void ColorImage::addTask(Vec2i offset, unsigned int extraAlpha,
     size.h(), size.w(),
     1,
     extraAlpha,
-    false, false, false, extraAlpha < 16,
+    false, extraAlpha < 16,
     false, false, true, false,
     color.get()
   });

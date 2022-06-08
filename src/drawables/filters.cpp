@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2021 613_forever
+// Copyright (c) 2021-2022 613_forever
 
 #include <dialog_video_generator/drawables/filters.h>
 
@@ -19,7 +19,7 @@ void LinearFilter::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTas
       config::HEIGHT, config::WIDTH,
       1,
       16,
-      false, false, false, false,
+      false, false,
       false, false, true, true,
       coefficients.get()
   });

@@ -25,7 +25,7 @@ void init() {
 
   for (auto& info : config::FONT_NAMES_AND_SIZES) {
     Face face = openFace(config::FONT_DIRECTORY + info.filename);
-//  FT_Set_Char_Size(faceForChineseText.get(), 0, 54 * 64, 72, 72);
+//    FT_Set_Char_Size(face.get(), 0, 54 * 64, 72, 72);
     FT_Set_Pixel_Sizes(face.get(), info.pixelWidth, info.pixelHeight);
     faces.emplace_back(std::move(face));
   }
@@ -62,6 +62,14 @@ FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint) {
 
 FT_GlyphSlot loadGlyph(std::size_t index, char32_t codePoint) {
   return loadGlyph(faces[index].get(), codePoint);
+}
+
+int getLineHeight(std::size_t index) {
+  return faces[index]->height * config::FONT_NAMES_AND_SIZES[index].pixelHeight / faces[index]->units_per_EM;
+}
+
+int getTopToBaseInline(std::size_t index) {
+  return faces[index]->ascender * config::FONT_NAMES_AND_SIZES[index].pixelHeight / faces[index]->units_per_EM;
 }
 
 } }

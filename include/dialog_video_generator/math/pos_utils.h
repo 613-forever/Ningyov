@@ -67,7 +67,6 @@ COMMON613_CHECK_BINARY_USABLE(Size);
 
 /// @brief RGBA structs.
 /// Used to describe colors.
-/// @note Unused now because there are no explicit color specification API now. Reserved for future use.
 struct Color4b : private common613::ArrNi<true, Byte, 4> {
   constexpr Color4b(const Color4b& arr) = default; // prevent resolution problem when copying
   constexpr Color4b(const ArrNi& arr) : ArrNi{arr} {} // NOLINT(google-explicit-constructor)
@@ -86,7 +85,7 @@ struct Color4b : private common613::ArrNi<true, Byte, 4> {
 
   template <class IntT, class IntT2, class IntT3, class IntT4>
   constexpr static Color4b of(IntT r, IntT2 g, IntT3 b, IntT4 a) {
-    return Color4b{ArrNi::of(r, g, b, a)};
+    return Color4b{ArrNi::of(a, b, g, r)};
   }
 };
 COMMON613_CHECK_BINARY_USABLE(Color4b);

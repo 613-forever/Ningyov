@@ -11,6 +11,7 @@ namespace dialog_video_generator { namespace cuda {
 void Closer::operator()(unsigned char* p) {
   BOOST_LOG_TRIVIAL(trace) << "Releasing CUDA memory @ " << (void*)(p);
   cudaFree(p);
+//  checkCudaError();
 }
 
 CudaMemory allocateMemory(unsigned int size) {
@@ -70,6 +71,11 @@ void init() {
   if (auto error = cudaSetDevice(i)) {
     COMMON613_FATAL("CudaSetDevice failed. Error code: {}.", error);
   }
+}
+
+void checkCudaError() {
+  auto errorCode = cudaGetLastError();
+  assert(errorCode == cudaError::cudaSuccess);
 }
 
 }

@@ -51,6 +51,8 @@ Face openFace(const std::string& filePathname);
 FT_GlyphSlot loadGlyph(FT_Face face, char32_t codePoint);
 FT_GlyphSlot loadGlyph(const Face& face, char32_t codePoint);
 FT_GlyphSlot loadGlyph(std::size_t faceIndex, char32_t codePoint);
+int getLineHeight(std::size_t index);
+int getTopToBaseInline(std::size_t index);
 
 } }
 

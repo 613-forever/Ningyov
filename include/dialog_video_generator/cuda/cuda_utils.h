@@ -48,6 +48,9 @@ inline CudaMemory copyFromCPUMemory(const common613::Memory& memory) {
 /// @brief Initialize CUDA.
 void init();
 
+/// @brief check CUDA error.
+void checkCudaError();
+
 }
 
 namespace config {
@@ -72,8 +75,16 @@ struct DrawTask {
   int y0, x0, ht, wt;
   unsigned int mul;
   unsigned int alpha;
-  bool useAlphaChannel, useAsAlphaOnly, useAsAlphaAndUseColorText, useExtraAlpha;
+  bool useAlphaChannel, useExtraAlpha;
   bool skip, flip, useOnlyOneColor, isLinearFilter;
+  const unsigned char* image;
+};
+
+/// @brief Wrapper for a layer task.
+struct TextTask {
+  int y0, x0, ht, wt;
+  std::uint8_t r, g, b;
+  bool reuse;
   const unsigned char* image;
 };
 
@@ -81,11 +92,16 @@ namespace cuda {
 
 /// @brief Render tasks in @p pTask onto buffers in @p pDst, and copy RGB channels into @p rgb.
 /// @note Cuda @c __GLOBAL__ function.
-void renderTasks(unsigned char** pDst, const DrawTask* pTask, size_t taskNum, unsigned char* rgb);
+void renderTasks(unsigned char** pDst, const DrawTask* pTask, std::size_t taskNum, unsigned char* rgb);
 
 /// @brief Copy RGB channel from 4-channel GPU image into a 3-channel one.
 /// @note Cuda @c __GLOBAL__ function.
 void copyRGBChannel(unsigned char* dst, const unsigned char* src);
+
+/// @brief Merge glyph masks in @p pGlyph with the mask @p pSrc, into the mask buffer @p pDst.
+/// @note Cuda @c __GLOBAL__ function.
+void mergeGlyphMasks(unsigned char** pDst, const TextTask* pTask, std::size_t taskNum,
+                     unsigned int height, unsigned int width);
 
 }
 

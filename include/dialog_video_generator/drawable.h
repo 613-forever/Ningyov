@@ -172,8 +172,6 @@ public:
  *
  * Texts will be shown in order in a constant speed.
  * Note that the speed will be approximated as numbers of new characters for every frame.
- *
- * @warning TextLike does not provide frame-reentrant guarantee by now. It always changes to the next frame.
  */
 class TextLike : public UpdatedByFrame {
 public:
@@ -191,20 +189,17 @@ public:
 
   Frames duration() const override;
   std::size_t bufferCount() const override;
-  /// @bug Texts shows more characters when called this, ignoring @p timeInShot !!!
   std::size_t nextFrame(Frames timeInShot) override;
-
-  /// @warning Texts will keep the current status when crossing shots, which is convenient but not recommended.
-  using Drawable::nextShot;
+  std::shared_ptr<Drawable> nextShot(bool stop, Frames point) override;
 
   void addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const override;
 
 private:
-  std::vector<Image> glyphs;
+  std::vector<Image> partial;
+  std::vector<unsigned int> indices;
   Size size;
-  std::size_t start, current;
-  std::size_t speedNum, speedDen;
-  bool colorType; // 0 = speaking, black; 1 = thinking, blue
+  std::size_t current;
+  Color4b color; // 0 = speaking, black; 1 = thinking, blue
 };
 
 class StatusSelector {
@@ -212,7 +207,7 @@ public:
   virtual ~StatusSelector() = default;
   virtual bool select(Frames timeInShot) = 0;
   virtual Frames leastDuration() const { return 0_fr; }
-  virtual void nextShot(bool stop, Frames point) {};
+  virtual void nextShot(bool stop, Frames point) {}
   std::size_t status{0};
 };
 
