@@ -3,9 +3,9 @@
 Welcome to Ningyov (pronounced as ning-GHYAW),
 the library to animate standing drawings into VIDEOs in the style of galgames or visual novels.
 
-> ~~The name Ningyov is short for “Ningyov Is Not Generating Your Own Videos.”~~
-> The name Ningyov comes from the Japanese word “<span lang="ja">人形</span>”(<span lang="ja">にんぎょう</span>, *ningyō*, lit. a doll or a puppet),
-> spelled with a V (instead of normally a macron, a U or an H),
+> ~~The name Ningyov is short for “Ningyov Is Not for Generating Your Own Videos.”~~
+> The name Ningyov is derived from the Japanese word “<span lang="ja">人形</span>”(<span lang="ja">にんぎょう</span>, *ningyō*, lit. a doll or a puppet),
+> but spelled with a V (instead of normally a circumflex, a macron, a U or an H)
 > to avoid name collision.
 
 Note that we generate video clips instead of games.
@@ -68,9 +68,19 @@ The following are what you may want to do, and they are what we really SUGGEST y
 
 ### Dependency
 
-#### Build Dependency
+#### Device Requirement
 
 + A compiler supporting `C++14`.
++ A GPU supporting `CUDA`. We need it to render frames.
+  (The library was written for private use first, so it was designed for my own hardware.
+  In this library, GPU renders the frames, while CPU encodes the video.)
+
+We have tested the library on the following environments:
++ OS: Windows 8.1 / CUDA: 10.2 / Compiler: Visual Studio 2017
++ OS: Ubuntu 16.04 / CUDA: 10.2 / Compiler: gcc 5.4.0
+
+#### Build Dependency
+
 + CUDA. We use 10. the version should not matter.
 + `Common613`. <https://github.com/613-forever/Common613>
 + `png++`. <https://www.nongnu.org/pngpp/>
@@ -83,6 +93,15 @@ The following are what you may want to do, and they are what we really SUGGEST y
 
 + `FFmpeg`. We suggest installing via your package manager. We use it as an external tool to encode videos, 
   so path variables should be prepared to find the executables.
+
+### Library Structure
+
+The library is composed of 4 abstraction levels.
+
++ Low-level: byte-level rendering objects. (CUDA programming files, `Image`/`RawImage`, et al.)
++ Drawable: drawable objects and paint engines. (`Texture`, `Stand`, `Engine`, et al.)
++ Semantic: common controlling objects in games. (`Characters`, `Dialog`, et al.)
++ Abstract: a director directing the action of objects. (`Director`, this is not committed as API is not concluded.)
 
 ### API Reference
 
