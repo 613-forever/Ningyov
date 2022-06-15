@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.17)
 
 project("Ningyov"
+        VERSION 1.1.0
         DESCRIPTION "A dialog video generator with standing drawings."
         LANGUAGES CXX CUDA
         )
@@ -129,3 +130,6 @@ target_link_libraries(${PROJECT_NAME}_FACADE PUBLIC ${PROJECT_NAME})
 
 add_subdirectory("test")
 add_subdirectory("doc")
+if (MAKE_EXAMPLES)
+  add_subdirectory("examples")
+endif (MAKE_EXAMPLES)

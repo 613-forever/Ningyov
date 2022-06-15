@@ -67,6 +67,10 @@ public:
  *
  * Clear the states, reset the shot, and another shot can be re-rendered with the layers.
  * Of course, layers can be changed, modified or just left untouched and reused, to make another sequence.
+ *
+ * Strategies may be rewritten with static morphism to optimize further.
+ * But our language level is C++14.
+ * Without template parameter deduction, it will be a bother to define an `Engine` variable.
  */
 class Engine {
 public:

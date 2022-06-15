@@ -15,28 +15,9 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
     : size(sz), current(-1), color(colorType ? /*config::COLOR_THINKING*/Color4b::of(255, 255, 255, 255) : /*config::COLOR_SPEAKING)*/Color4b::of(0, 0, 0, 255)), partial(), indices() {
   tiny_utf8::string buffer(content);
 
-  // calc indices size (duration)
-  auto updateFrames = (speedDen * (buffer.length() - start) + speedNum - 1) / speedNum + 1;
-  auto updateTimes = ((buffer.length() - start) + speedNum - 1) / speedNum + 1;
-  CudaMemory partialBuffersOnGPU;
-  {
-    std::vector<unsigned char*> partialBuffers;
-    partial.reserve(updateTimes);
-    for (int i = 0; i < updateTimes; ++i) {
-      CudaMemory memory = cuda::allocateMemory(size.h(), size.w());
-      partial.emplace_back(Image{
-        RawImage{size, memory},
-        1,
-        pos,
-        false,
-      });
-      partialBuffers.push_back(memory.get());
-    }
-    partialBuffersOnGPU = cuda::copyFromCPUMemory(partialBuffers.data(), partialBuffers.size() * sizeof(unsigned char*));
-  }
-
   // init glyphs
   std::vector<Image> glyphs;
+  glyphs.reserve(buffer.length());
   auto lineHeight = static_cast<Dim>(font::getLineHeight(fontIndex)); // unchecked
   // max if multiple fonts are allowed in the future
   {
@@ -52,6 +33,7 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
         const Size glyphSize = Size::of(slot->bitmap.rows, slot->bitmap.width);
         if (glyphSize.total() == 0) {
           BOOST_LOG_TRIVIAL(debug) << fmt::format("Empty glyph for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
+          glyphs.emplace_back(Image{});
         } else {
           BOOST_LOG_TRIVIAL(trace) << fmt::format("Generating glyph bitmap for {:#x}, {}x{}.", c, glyphSize.h(), glyphSize.w());
           Memory memory(glyphSize.total());
@@ -94,22 +76,31 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
     }
   }
 
+  while (!glyphs.back().raw.memory) {
+    glyphs.pop_back();
+    buffer.pop_back();
+  }
+  // Calculates indices size (duration). trailing blanks are ignored.
+  auto updateFrames = (speedDen * (buffer.length() - start) + speedNum - 1) / speedNum + 1;
+
   // make updates for frames
   std::vector<TextTask> tasks;
+  std::size_t bufferId = 0;
   {
     indices.resize(updateFrames);
 
     std::size_t last = start;
-    std::size_t bufferId = 0;
     // frame 0
     for (auto glyphIndex = 0u; glyphIndex < start; ++glyphIndex) {
       auto& glyph = glyphs[glyphIndex];
-      tasks.emplace_back(TextTask{
-          glyph.pos.y(), glyph.pos.x(),
-          glyph.raw.size.h(), glyph.raw.size.w(),
-          color.r(), color.g(), color.b(), true,
-          glyph.raw.memory.get()
-      });
+      if (glyph.raw.memory) {
+        tasks.emplace_back(TextTask{
+            glyph.pos.y(), glyph.pos.x(),
+            glyph.raw.size.h(), glyph.raw.size.w(),
+            color.r(), color.g(), color.b(), true,
+            glyph.raw.memory.get()
+        });
+      }
     }
     indices[0] = bufferId++;
     // frame 1 - updates-1
@@ -121,27 +112,58 @@ TextLike::TextLike(const std::string& content, Vec2i pos, Size sz, bool colorTyp
       if (current >= glyphs.size()) {
         current = glyphs.size();
       }
+      // Skips if not updated.
       if (current == last) {
         indices[index] = bufferId;
         continue;
       }
+      // Then update is checked by tasks instead of glyph indices. (To skip space characters.)
       auto firstTaskForFrame = tasks.size();
       for (auto glyphIndex = last; glyphIndex < current; ++glyphIndex) {
         auto& glyph = glyphs[glyphIndex];
-        tasks.emplace_back(TextTask{
-            glyph.pos.y(), glyph.pos.x(),
-            glyph.raw.size.h(), glyph.raw.size.w(),
-            color.r(), color.g(), color.b(), true,
-            glyph.raw.memory.get()
-        });
+        if (glyph.raw.memory) {
+          tasks.emplace_back(TextTask{
+              glyph.pos.y(), glyph.pos.x(),
+              glyph.raw.size.h(), glyph.raw.size.w(),
+              color.r(), color.g(), color.b(), true,
+              glyph.raw.memory.get()
+          });
+        }
       }
+      last = current;
+      // If not updated, use the same buffer.
+      if (firstTaskForFrame == tasks.size()) {
+        indices[index] = bufferId;
+        continue;
+      }
+      // If updated, use the next buffer.
       tasks[firstTaskForFrame].reuse = false;
       indices[index] = bufferId++;
-      last = current;
     }
   }
 
-  assert(partial.size() == std::count_if(tasks.begin(), tasks.end(), [](const TextTask& task) { return !task.reuse; }) + 1);
+  assert(bufferId == std::count_if(tasks.begin(), tasks.end(), [](const TextTask& task) { return !task.reuse; }) + 1);
+  // Prepares buffers.
+  CudaMemory partialBuffersOnGPU;
+  {
+//    auto updateTimes = ((buffer.length() - start) + speedNum - 1) / speedNum + 1;
+    auto updateTimes = bufferId;
+    std::vector<unsigned char*> partialBuffers;
+    partial.reserve(updateTimes);
+    for (int i = 0; i < updateTimes; ++i) {
+      CudaMemory memory = cuda::allocateMemory(size.h(), size.w());
+      partial.emplace_back(Image{
+          RawImage{size, memory},
+          1,
+          pos,
+          false,
+      });
+      partialBuffers.push_back(memory.get());
+    }
+    partialBuffersOnGPU = cuda::copyFromCPUMemory(partialBuffers.data(), partialBuffers.size() * sizeof(unsigned char*));
+  }
+
+//  assert(partial.size() == std::count_if(tasks.begin(), tasks.end(), [](const TextTask& task) { return !task.reuse; }) + 1);
   auto tasksOnGPU = cuda::copyFromCPUMemory(tasks.data(), tasks.size() * sizeof(TextTask));
   cuda::mergeGlyphMasks(reinterpret_cast<unsigned char**>(partialBuffersOnGPU.get()),
                         reinterpret_cast<TextTask*>(tasksOnGPU.get()), tasks.size(),
@@ -171,6 +193,7 @@ std::shared_ptr<Drawable> TextLike::nextShot(bool stop, Frames point) {
   }
   indices.erase(indices.begin(), indices.begin() + std::ptrdiff_t(current));
   current = 0;
+  return shared_from_this();
 }
 
 void TextLike::addTask(Vec2i offset, unsigned int alpha, std::vector<DrawTask>& tasks) const {

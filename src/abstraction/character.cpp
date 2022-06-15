@@ -34,8 +34,7 @@ Character::Character(std::string dialogDir, std::string dialogFormat,
     standDir(std::move(standRootDir)), charStr(std::move(characterString)) {
   clearDialogResources(isFirstPerson);
   // initEyeBinder();
-  blinkSelector = std::make_shared<BlinkSelector>(&eyeBinder);
-  BlinkSelector::reset(blinkSelector.get());
+  blinkSelector = std::make_shared<BlinkSelector>(&eyeBinder, true);
 }
 
 Character::~Character() = default;

@@ -33,7 +33,9 @@ private:
 
 class BlinkSelector : public StatusSelector {
 public:
-  explicit BlinkSelector(Frames* cd) : countDown(cd) {}
+  explicit BlinkSelector(Frames* cd, bool init = false) : countDown(cd) {
+    if (init) reset(this);
+  }
   ~BlinkSelector() override = default;
   bool select(Frames timeInShot) override;
   static void reset(BlinkSelector* instance);

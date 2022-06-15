@@ -212,7 +212,7 @@ public:
 };
 
 /**
- * @brief Stand CG, or @e Tachie (<span lang="ja">立ち絵</span>).
+ * @brief Standing drawing, or @e Tachie (<span lang="ja">立ち絵</span>).
  *
  * Provides functions for blinking and speaking stand CG update.
  * An eye status variable should be provided externally to bind here.

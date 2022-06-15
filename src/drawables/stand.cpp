@@ -127,10 +127,12 @@ void Stand::setSpeakingDuration(Frames duration) {
 
 bool BlinkSelector::select(Frames timeInShot) {
   static std::size_t changeStart = 2 * config::STAND_EXPR_EYE_COUNT - 1;
-  auto cd = countDown->x();
+  auto cd = --countDown->x();
   if (cd < changeStart) {
-    status = cd > config::STAND_EXPR_EYE_COUNT ? changeStart - 1 - cd : cd;
-    resetBlinkCountDownRandomly();
+    status = cd >= config::STAND_EXPR_EYE_COUNT ? changeStart - 1 - cd : cd;
+    if (cd == 0) {
+      resetBlinkCountDownRandomly();
+    }
     return true;
   }
   return false;
@@ -171,6 +173,7 @@ bool SpeakingMouthSelector::select(Frames timeInShot) {
       }
       return true;
     }
+    return false;
   } else {
     if (status != 0) {
       status = 0;

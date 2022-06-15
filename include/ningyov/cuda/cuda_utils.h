@@ -62,6 +62,7 @@ extern std::uint16_t WIDTH_BATCHES;
 extern std::uint16_t THREAD_PER_BLOCK;
 }
 
+#if 0
 /// @brief Show the first pixel for a PNG in CPU memory.
 /// @note DEBUG function. No-op in normal use for performance.
 void showFirstPixelForLocal(const unsigned char* memory, const char* prefix);
@@ -69,6 +70,10 @@ void showFirstPixelForLocal(const unsigned char* memory, const char* prefix);
 /// @brief Show the first pixel for a PNG in GPU memory.
 /// @note DEBUG function. No-op in normal use for performance.
 void showFirstPixelForCuda(const unsigned char* cudaMemory, const char* prefix);
+#else
+inline void showFirstPixelForCuda(const unsigned char*, const char*) {}
+inline void showFirstPixelForLocal(const unsigned char*, const char*) {}
+#endif
 
 /// @brief Wrapper for a layer task.
 struct DrawTask {

@@ -97,10 +97,6 @@ void showFirstPixelForLocal(const unsigned char* memory, const char* prefix) {
   BOOST_LOG_TRIVIAL(trace) << fmt::format("{} {:p}[{},{},{};{}]", prefix, memory,
                                           memory[0], memory[1], memory[2], memory[3]);
 }
-#else
-void showFirstPixelForCuda(const unsigned char*, const char*) {}
-void showFirstPixelForLocal(const unsigned char*, const char*) {}
 #endif
-
 
 }
