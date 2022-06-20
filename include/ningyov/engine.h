@@ -101,14 +101,14 @@ private:
   void renderTasks(size_t startBuffer, size_t bg, const std::vector<DrawTask>& tasks, size_t skippedTaskNumber) const;
 
 public:
-  /// @brief Set a shot to be at a length of @p fr.
+  /// @brief Set a shot to wait after all animation layers finishes, for an extra length of @p fr.
   void setWaitLength(Frames fr);
   /// @brief Shortcut to @c setWaitLength followed by @c renderShot .
   void setWaitAndRender(Frames fr) {
     setWaitLength(fr);
     renderShot();
   }
-  /// @brief Set a shot to wait after all animation layers finishes, at a length of @p fr.
+  /// @brief Set a shot to be of a total length of @p fr.
   void setTotalLength(Frames fr);
   /// @brief Shortcut to @c setTotalLength followed by @c renderShot .
   void setTotalAndRender(Frames fr) {
